@@ -28,7 +28,7 @@ Supported shortlink providers :
 
 * Native (blogurl?p=post_ID)
 * is.gd
-* byt.ly (need api key)
+* bit.ly (need api key)
 * goo.gl
 * tinyurl.com
 * su.pr
@@ -59,8 +59,8 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 == Screenshots ==
 
 1. Settings
-2. Menu
-3. Dashboard widget
+2. Dashboard widget
+3. Menu
 4. Public widget
 
 == Changelog ==
