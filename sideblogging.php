@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: SideBlogging
- * Plugin URI: http://wordpress.org/extend/plugins/sideblogging/
+ * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
  * Description: Display asides in a widget. They can automatically be published to Twitter and Facebook.
  * Version: 0.1.1
  * Author: Cédric Boverie
