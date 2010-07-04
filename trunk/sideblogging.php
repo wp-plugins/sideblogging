@@ -3,9 +3,10 @@
  * Plugin Name: SideBlogging
  * Plugin URI: http://wordpress.org/extend/plugins/sideblogging/
  * Description: Display asides in a widget. They can automatically be published to Twitter and Facebook.
- * Version: 0.1
+ * Version: 0.1.1
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
+ * Text Domain: sideblogging
 */
 /* Copyright 2010  Cédric Boverie  (email : ced@boverie.eu)
  * this program is free software; you can redistribute it and/or modify
@@ -21,9 +22,9 @@
 */
 
 // Installation
-register_activation_hook(__FILE__,'Sideblogging::activation');
+register_activation_hook(__FILE__,array('Sideblogging','activation'));
 // Désinstallation
-register_deactivation_hook(__FILE__,'Sideblogging::deactivation');
+register_deactivation_hook(__FILE__,array('Sideblogging','deactivation'));
 
 if(!class_exists('Sideblogging')):
 class Sideblogging {
@@ -111,6 +112,7 @@ class Sideblogging {
 	}
 	
 	function add_dashboard_widget() {
+            if(current_user_can('manage_options'))
 		wp_add_dashboard_widget('sideblogging_dashboard_widget', __('Asides',self::domain), array(&$this,'dashboard_widget'));
 	}
 	
@@ -204,7 +206,7 @@ class Sideblogging {
 			require_once('libs/twitteroauth.php');
 			$options = get_option('sideblogging');
 			$connection = new TwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret']);
-			$request_token = @$connection->getRequestToken(SIDEBLOGGING_OAUTH_CALLBACK); // Génère des notices en cas d'erreur de connexion
+			$request_token = $connection->getRequestToken(SIDEBLOGGING_OAUTH_CALLBACK); // Génère des notices en cas d'erreur de connexion
 			if(200 == $connection->http_code)
 			{
 				$_SESSION['oauth_token'] = $token = $request_token['oauth_token'];
@@ -451,8 +453,12 @@ class Sideblogging {
 		echo '</form>';
 		
 		echo '<h3>'.__('Republish on Twitter',self::domain).'</h3>';
-	
-		if(empty($options['twitter_consumer_key']) || empty($options['twitter_consumer_secret']))
+
+                if(!extension_loaded('curl'))
+		{
+                        echo '<p>'.__('Sorry, at this time you need Curl to connect with Twitter',self::domain).'.</p>';
+                }
+                else if(empty($options['twitter_consumer_key']) || empty($options['twitter_consumer_secret']))
 		{
 			echo '<p>'.__('You must configure Twitter app to be able to sign-in',self::domain).'.</p>';
 		}
@@ -471,8 +477,12 @@ class Sideblogging {
 		
 		
 		echo '<h3>'.__('Republish on Facebook',self::domain).'</h3>';
-		
-		if(empty($options['facebook_consumer_key']) || empty($options['facebook_consumer_secret']))
+
+                if(!extension_loaded('openssl'))
+                {
+                        echo '<p>'.__('Sorry, you need OpenSLL to connect with Facebook',self::domain).'.</p>';
+                }
+		else if(empty($options['facebook_consumer_key']) || empty($options['facebook_consumer_secret']))
 		{
 			echo '<p>'.__('You must configure Facebook app to be able to sign-in',self::domain).'.</p>';
 		}
@@ -518,8 +528,10 @@ class Sideblogging {
 		$options['shortener_password'] = (isset($options['shortener_password'])) ? esc_attr($options['shortener_password']) : $options_old['shortener_password'];
 
 		$options['purge'] = (is_numeric($options['purge'])) ? intval($options['purge']) : 0;
+		
+		if(is_array($options_old))
+			$options = array_merge($options_old,$options);
 
-		$options = array_merge($options_old,$options);
 		return $options;
 	}
 	

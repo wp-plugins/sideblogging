@@ -4,7 +4,7 @@ Donate link: http://www.boverie.eu/
 Tags: asides,facebook,twitter
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 0.1
+Stable tag: 0.1.1
 
 Display asides in a widget. They can automatically be published to Twitter and Facebook. Require Wordpress 3 and PHP 5.
 
@@ -65,10 +65,19 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 
 == Changelog ==
 
+= 0.1.1 =
+* Fix a problem that occurred in unexpected situations
+* Plugin tested with PHP 5.2
+* Fix a security issue in dashboard widget
+* More check about compatibility
+
 = 0.1 =
 * First public version.
 
 == Upgrade Notice ==
+
+= 0.1.1 =
+Fix a random error and a security issue.
 
 = 0.1 =
 Is it possible to upgrade to the first version ?
