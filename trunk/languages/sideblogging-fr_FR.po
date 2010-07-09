@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: SideBlogging 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-04 04:01+0100\n"
-"PO-Revision-Date: 2010-07-04 04:09+0100\n"
+"POT-Creation-Date: 2010-07-09 21:33+0100\n"
+"PO-Revision-Date: 2010-07-09 21:34+0100\n"
 "Last-Translator: Cédric Boverie <ced@boverie.eu>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -72,7 +72,7 @@ msgstr "Metttez %s dans le champ URL Connect"
 
 # @ sideblogging
 #: sideblogging.php:116
-#: sideblogging.php:542
+#: sideblogging.php:559
 #: sideblogging_Widget.php:49
 msgid "Asides"
 msgstr "Brèves"
@@ -127,130 +127,134 @@ msgstr "Une erreur est survenue pendant la connexion avec Facebook"
 msgid "General Settings"
 msgstr "Paramètres généraux"
 
-# @ sideblogging
 #: sideblogging.php:381
+msgid "Allow comments "
+msgstr "Autoriser les commentaires"
+
+# @ sideblogging
+#: sideblogging.php:391
 msgid "Purge asides older than "
 msgstr "Purger les brèves de plus de"
 
 # @ sideblogging
-#: sideblogging.php:384
+#: sideblogging.php:394
 msgid "days"
 msgstr "jours"
 
 # @ sideblogging
-#: sideblogging.php:384
+#: sideblogging.php:394
 msgid "0 for keeping asides forever"
 msgstr "0 pour conserver les brèves indéfiniment"
 
 # @ sideblogging
-#: sideblogging.php:388
+#: sideblogging.php:398
 msgid "Url shortener"
 msgstr "Raccourcisseur d'url"
 
 # @ sideblogging
-#: sideblogging.php:413
+#: sideblogging.php:423
 msgid "Find your key"
 msgstr "Trouver votre clé"
 
 # @ sideblogging
-#: sideblogging.php:417
+#: sideblogging.php:427
 msgid "Applications Settings"
 msgstr "Paramètres des applications"
 
 # @ sideblogging
-#: sideblogging.php:450
+#: sideblogging.php:460
 msgid "Don't forget to look at the contextual help (in the top right of page) for more informations about keys."
 msgstr "N'oubliez pas de consulter l'aide contextuelle (en haut à droite de la page) pour plus d'informations sur ces clés."
 
-#: sideblogging.php:451
+#: sideblogging.php:461
 msgid "Save Changes"
 msgstr ""
 
 # @ sideblogging
-#: sideblogging.php:455
+#: sideblogging.php:465
 msgid "Republish on Twitter"
 msgstr "Republier sur Twitter"
 
 # @ sideblogging
-#: sideblogging.php:459
+#: sideblogging.php:469
 msgid "Sorry, at this time you need Curl to connect with Twitter"
 msgstr "Désolé. Pour le moment, Curl est nécessaire pour la connexion à Twitter"
 
 # @ sideblogging
-#: sideblogging.php:463
+#: sideblogging.php:473
 msgid "You must configure Twitter app to be able to sign-in"
 msgstr "Vous devez configurer l'application Twitter pour pouvoir vous connecter"
 
 # @ sideblogging
-#: sideblogging.php:467
+#: sideblogging.php:477
 msgid "To automatically publish your asides on Twitter, sign-in below:"
 msgstr "Pour publier automatiquement vos brèves sur Twitter, connectez-vous ci-desous :"
 
 # @ sideblogging
-#: sideblogging.php:474
+#: sideblogging.php:484
 #, php-format
 msgid "You are connected to Twitter as %s"
 msgstr "Vous êtes connectés à Twitter en tant que %s"
 
 # @ sideblogging
-#: sideblogging.php:475
-#: sideblogging.php:499
+#: sideblogging.php:485
+#: sideblogging.php:509
 msgid "Change account or disable"
 msgstr "Changer de compte ou désactiver"
 
 # @ sideblogging
-#: sideblogging.php:479
+#: sideblogging.php:489
 msgid "Republish on Facebook"
 msgstr "Republier sur Facebook"
 
 # @ sideblogging
-#: sideblogging.php:483
+#: sideblogging.php:493
 msgid "Sorry, you need OpenSLL to connect with Facebook"
 msgstr "Désolé. OpenSSL est nécessaire pour la connexion à Facebook"
 
 # @ sideblogging
-#: sideblogging.php:487
+#: sideblogging.php:497
 msgid "You must configure Facebook app to be able to sign-in"
 msgstr "Vous devez configurer l'application Facebook pour pouvoir vous connecter"
 
 # @ sideblogging
-#: sideblogging.php:491
+#: sideblogging.php:501
 msgid "To automatically publish your asides on Facebook, sign-in below:"
 msgstr "Pour publier automatiquement vos brèves sur Facebook, connectez-vous ci-desous :"
 
 # @ sideblogging
-#: sideblogging.php:498
+#: sideblogging.php:508
 #, php-format
 msgid "You are connected to Facebook as %s"
 msgstr "Vous êtes connectés à Facebook en tant que %s"
 
 # @ sideblogging
-#: sideblogging.php:543
+#: sideblogging.php:560
 msgid "Aside"
 msgstr "Brève"
 
 # @ sideblogging
-#: sideblogging.php:550
+#: sideblogging.php:567
 msgid "Add new aside"
 msgstr "Ajouter une nouvelle brève"
 
 # @ sideblogging
-#: sideblogging.php:551
+#: sideblogging.php:568
 msgid "Edit aside"
 msgstr "Modifier la brève"
 
 # @ sideblogging
-#: sideblogging.php:552
+#: sideblogging.php:569
 msgid "No aside found"
 msgstr "Aucune brève trouvée"
 
 # @ sideblogging
-#: sideblogging.php:553
+#: sideblogging.php:570
 msgid "No aside found in trash"
 msgstr "Aucune brève trouvée dans la corbeille"
 
 # @ sideblogging
-#: sideblogging.php:554
+#: sideblogging.php:571
 msgid "Search asides"
 msgstr "Chercher dans les brèves"
 
