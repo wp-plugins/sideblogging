@@ -1,9 +1,9 @@
 <?php
 /*
  * Plugin Name: SideBlogging
- * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
+ * Plugin URI: http://wordpress.org/extend/plugins/sideblogging/
  * Description: Display asides in a widget. They can automatically be published to Twitter and Facebook.
- * Version: 0.1.1
+ * Version: 0.2
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
  * Text Domain: sideblogging
@@ -33,7 +33,7 @@ class Sideblogging {
 
 	function Sideblogging() {
 		define('SIDEBLOGGING_URL', WP_PLUGIN_URL.'/'.dirname(plugin_basename(__FILE__)));		
-		define('SIDEBLOGGING_OAUTH_CALLBACK', get_bloginfo('url').'/wp-admin/options-general.php?page=sideblogging');
+		define('SIDEBLOGGING_OAUTH_CALLBACK', get_bloginfo('wpurl').'/wp-admin/options-general.php?page=sideblogging');
 		load_plugin_textdomain(self::domain,false,dirname(plugin_basename(__FILE__)).'/languages/');
 	
 		// Register custom post type
@@ -247,7 +247,7 @@ class Sideblogging {
 			if(!$shortlink)
 				$shortlink = get_bloginfo('url').'/?p='.$post_ID;
 
-			if(isset($options['twitter_token'])) // Twitter est configuré
+			if(isset($options['twitter_token']) && !empty($options['twitter_token'])) // Twitter est configuré
 			{
 				require_once 'libs/twitteroauth.php';
 				$content = $post->post_title;
@@ -260,7 +260,7 @@ class Sideblogging {
 				$connection->post('statuses/update', array('status' => $content));
 			}
 			
-			if(isset($options['facebook_token']))
+			if(isset($options['facebook_token']) && !empty($options['facebook_token']))
 			{
 				$body = $options['facebook_token']['access_token'].'&message='.$post->post_title;
 				
@@ -376,6 +376,16 @@ class Sideblogging {
 
 		echo '<table class="form-table">';
 		
+		echo '<tr valign="top">
+		<th scope="row">
+		<label for="sideblogging_comments">'.__('Allow comments ',self::domain).'</label>
+		</th><td>';
+		echo '<select name="sideblogging[comments]" id="sideblogging_comments">';
+		echo '<option value="0">OFF</option>';
+		echo '<option '.selected(1,$options['comments']).' value="1">ON</option>';
+		echo '</select>';
+		echo '</td></tr>';
+				
 		echo '<tr valign="top">
 		<th scope="row">
 		<label for="sideblogging_purge">'.__('Purge asides older than ',self::domain).'</label>
@@ -537,6 +547,13 @@ class Sideblogging {
 	
 	// Add custom post type
 	function post_type_asides() {
+		
+		$options = get_option('sideblogging');
+		$supports = array('title','editor');
+		
+		if(isset($options['comments']) && $options['comments'] == 1)
+			array_push($supports,'comments');
+
 		register_post_type( 'asides',
 			array(
 				'label' => __('Asides',self::domain),
@@ -553,7 +570,7 @@ class Sideblogging {
 					'not_found_in_trash' => __('No aside found in trash',self::domain),
 					'search_items' => __('Search asides',self::domain),
 				),
-				'supports' => array('title','editor'),
+				'supports' => $supports,
 				'rewrite' => array('slug' => 'asides'),
 			)
 		);

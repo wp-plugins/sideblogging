@@ -4,7 +4,7 @@ Donate link: http://www.boverie.eu/
 Tags: asides,facebook,twitter
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 0.1.1
+Stable tag: 0.2
 
 Display asides in a widget. They can automatically be published to Twitter and Facebook. Require Wordpress 3 and PHP 5.
 
@@ -24,8 +24,8 @@ A Twitter app is preconfigured.
 For Facebook, you need to create your own application. Video tutorial included in contextual help on settings page.
 
 When asides with additional content are published to Twitter a shortlink to the full content is added.          
-Supported shortlink providers : 
 
+Supported shortlink providers : 
 * Native (blogurl?p=post_ID)
 * is.gd
 * bit.ly (need api key)
@@ -65,6 +65,10 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 
 == Changelog ==
 
+= 0.2 =
+* New option : comments in asides.
+* Bugfix : Errors when WordPress address was not the same that blog address.
+
 = 0.1.1 =
 * Fix a problem that occurred in unexpected situations
 * Plugin tested with PHP 5.2
@@ -75,6 +79,10 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 * First public version.
 
 == Upgrade Notice ==
+
+= 0.2 =
+Comments in asides : If you want you can manually allow comments on previous asides (after activate the option).
+On new aside that will be automatically.
 
 = 0.1.1 =
 Fix a random error and a security issue.
