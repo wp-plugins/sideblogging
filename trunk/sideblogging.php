@@ -3,7 +3,7 @@
  * Plugin Name: SideBlogging
  * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
  * Description: Display asides in a widget. They can automatically be published to Twitter and Facebook.
- * Version: 0.2.1
+ * Version: 0.3
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
  * Text Domain: sideblogging
@@ -38,6 +38,9 @@ class Sideblogging {
 	
 		// Register custom post type
 		add_action('init', array(&$this,'post_type_asides'));
+		
+		// Rewrite rules
+		add_filter('generate_rewrite_rules', array(&$this, 'custom_rewrite_rules'));
 				
 		// Register Widget
 		include dirname(__FILE__).'/sideblogging_Widget.php';
@@ -61,6 +64,9 @@ class Sideblogging {
 			add_action('wp_dashboard_setup', array(&$this,'add_dashboard_widget'));
 			add_action('admin_head-index.php', array(&$this,'dashboard_admin_js'));
 			add_action('wp_ajax_sideblogging_widget_post', array(&$this,'ajax_action'));
+			
+			// Regenerate permalink (on every admin page, need to find better)
+			add_action('admin_init', array(&$this,'regenerate_rewrite_rules'));
 		}
 	}
 	
@@ -108,6 +114,9 @@ class Sideblogging {
 				<li>'.__('Go to section <em>Connection</em>',self::domain).'.</li>
 				<li>'.sprintf(__('Put %s in the field URL Connect',self::domain),'<strong>'.get_bloginfo('url').'/</strong>').'.</li>
 				</ul>';
+				
+		$text .= '<h5>'.__('Debug',self::domain).'</h5>';
+		$text .= '<p><a href="options-general.php?page=sideblogging&debug=1">'.__('Debug information',self::domain).'</a></p>';
 		add_contextual_help($screen,$text);
 	}
 	
@@ -200,17 +209,18 @@ class Sideblogging {
 
 	/* Gère la redirection vers les pages de demande de connexion Oauth */
 	function connect_to_oauth() {
-		session_start();
 		if(isset($_GET['action']) && $_GET['action'] == 'connect_to_twitter' && wp_verify_nonce($_GET['_wpnonce'],'connect_to_twitter')) // Twitter redirection
 		{
 			require_once('libs/twitteroauth.php');
 			$options = get_option('sideblogging');
-			$connection = new TwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret']);
+			$connection = new SidebloggingTwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret']);
 			$request_token = $connection->getRequestToken(SIDEBLOGGING_OAUTH_CALLBACK); // Génère des notices en cas d'erreur de connexion
 			if(200 == $connection->http_code)
 			{
-				$_SESSION['oauth_token'] = $token = $request_token['oauth_token'];
-				$_SESSION['oauth_token_secret'] = $request_token['oauth_token_secret'];
+				$token = $request_token['oauth_token'];
+				set_transient('oauth_token', $token, 86400);
+				set_transient('oauth_token_secret', $request_token['oauth_token_secret'], 86400);
+				
 				$url = $connection->getAuthorizeURL($token,false);
 				wp_redirect($url.'&oauth_access_type=write');
 			}
@@ -255,7 +265,7 @@ class Sideblogging {
 				if(strlen($post->post_content) > 0)
 					$content .= ' '.$shortlink;
 
-				$connection = new TwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret'],
+				$connection = new SidebloggingTwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret'],
 							$options['twitter_token']['oauth_token'],$options['twitter_token']['oauth_token_secret']);
 				$connection->post('statuses/update', array('status' => $content));
 			}
@@ -282,24 +292,28 @@ class Sideblogging {
 		if(isset($_GET['debug']))
 		{
 			$options = get_option('sideblogging');
-			echo '<h3>Options enregistrées</h3>';
+			echo '<h3>'.__('Settings').'</h3>';
 			echo '<pre>';
 			print_r($options);
 			echo '</pre>';
-			if(isset($options['facebook_token']))
+
+			echo '<h3>Facebook</h3>';
+			if(isset($options['facebook_token']['access_token']))
 			{
-				echo '<h3>Facebook</h3>';
 				$result = wp_remote_get('https://graph.facebook.com/me?'.$options['facebook_token']['access_token'], array('sslverify' => false));
 				$me = json_decode(wp_remote_retrieve_body($result),true);
 				echo '<pre>';
 				print_r($me);
 				echo '</pre>';
 			}
-			if(isset($options['twitter_token']))
+			else
+				echo '<p>'.__('No Facebook account registered',self::domain).'.</p>';
+				
+			require_once 'libs/twitteroauth.php';
+			echo '<h3>Twitter</h3>';
+			if(isset($options['twitter_token']['oauth_token']))
 			{
-				require_once 'libs/twitteroauth.php';
-				echo '<h3>Twitter</h3>';
-				$connection = new TwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret'],
+				$connection = new SidebloggingTwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret'],
 							$options['twitter_token']['oauth_token'],$options['twitter_token']['oauth_token_secret']);
 				$content = $connection->get('account/rate_limit_status');
 				echo 'Quota API :'.$content->remaining_hits.' appels restants.';
@@ -308,7 +322,9 @@ class Sideblogging {
 				print_r($content);
 				echo '</pre>';
 			}
-			
+			else
+				echo '<p>'.__('No Twitter account registered',self::domain).'.</p>';
+
 			echo '</div>';
 			return;
 		}
@@ -316,10 +332,12 @@ class Sideblogging {
 		{
 			$options = get_option('sideblogging');
 			require_once('libs/twitteroauth.php');
-			$connection = new TwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret'], $_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
+			$connection = new SidebloggingTwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret'], get_transient('oauth_token'), get_transient('oauth_token_secret'));
 			$access_token = $connection->getAccessToken($_GET['oauth_verifier']);
-			unset($_SESSION['oauth_token']);
-			unset($_SESSION['oauth_token_secret']);
+			
+			delete_transient('oauth_token');
+			delete_transient('oauth_token_secret');
+			
 			if (200 == $connection->http_code)
 			{
 				$options['twitter_token']['oauth_token'] = esc_attr($access_token['oauth_token']);
@@ -378,7 +396,7 @@ class Sideblogging {
 		
 		echo '<tr valign="top">
 		<th scope="row">
-		<label for="sideblogging_comments">'.__('Allow comments ',self::domain).'</label>
+		<label for="sideblogging_comments">'.__('Allow comments',self::domain).'</label>
 		</th><td>';
 		echo '<select name="sideblogging[comments]" id="sideblogging_comments">';
 		echo '<option value="0">OFF</option>';
@@ -464,11 +482,7 @@ class Sideblogging {
 		
 		echo '<h3>'.__('Republish on Twitter',self::domain).'</h3>';
 
-                if(!extension_loaded('curl'))
-		{
-                        echo '<p>'.__('Sorry, at this time you need Curl to connect with Twitter',self::domain).'.</p>';
-                }
-                else if(empty($options['twitter_consumer_key']) || empty($options['twitter_consumer_secret']))
+		if(empty($options['twitter_consumer_key']) || empty($options['twitter_consumer_secret']))
 		{
 			echo '<p>'.__('You must configure Twitter app to be able to sign-in',self::domain).'.</p>';
 		}
@@ -485,7 +499,7 @@ class Sideblogging {
 			echo '<a href="'.wp_nonce_url('options-general.php?page=sideblogging&action=disconnect_from_twitter','disconnect_from_twitter').'">'.__('Change account or disable',self::domain).'</a>.</p>';
 		}
 		
-		
+
 		echo '<h3>'.__('Republish on Facebook',self::domain).'</h3>';
 
                 if(!extension_loaded('openssl'))
@@ -552,7 +566,7 @@ class Sideblogging {
 		$supports = array('title','editor');
 		
 		if(isset($options['comments']) && $options['comments'] == 1)
-			array_push($supports,'comments');
+			$supports[] = 'comments';
 
 		register_post_type( 'asides',
 			array(
@@ -571,9 +585,25 @@ class Sideblogging {
 					'search_items' => __('Search asides',self::domain),
 				),
 				'supports' => $supports,
-				'rewrite' => array('slug' => 'asides'),
+				//'rewrite' => array('slug' => 'asides'),
 			)
 		);
+	}
+	
+	function custom_rewrite_rules($wp_rewrite) {
+		$new_rules = array();
+		$new_rules['asides/page/?([0-9]{1,})/?$'] = 'index.php?post_type=asides&paged=' . $wp_rewrite->preg_index(1);
+		$new_rules['asides/(feed|rdf|rss|rss2|atom)/?$'] = 'index.php?post_type=asides&feed=' . $wp_rewrite->preg_index(1);
+		$new_rules['asides/?$'] = 'index.php?post_type=asides';
+
+		$wp_rewrite->rules = array_merge($new_rules, $wp_rewrite->rules);
+				
+		return $wp_rewrite;
+	}
+	
+	function regenerate_rewrite_rules() {
+		global $wp_rewrite;
+		$wp_rewrite->flush_rules();
 	}
 }
 endif;

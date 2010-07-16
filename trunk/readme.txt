@@ -4,7 +4,7 @@ Donate link: http://www.boverie.eu/
 Tags: asides,facebook,twitter
 Requires at least: 3.0
 Tested up to: 3.0
-Stable tag: 0.2.1
+Stable tag: 0.3
 
 Display asides in a widget. They can automatically be published to Twitter and Facebook. Require Wordpress 3 and PHP 5.
 
@@ -41,7 +41,6 @@ Supported shortlink providers :
 
 1. Upload `sideblogging` directory to the `/wp-content/plugins/` directory.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Regenerate Wordpress permalink (why? See FAQ)
 3. Configure the plugin's settings.
 
 == Frequently Asked Questions ==
@@ -66,6 +65,11 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 
 == Changelog ==
 
+= 0.3 =
+* Converts text links into clickable links.
+* New permalinks.
+* Twitter features do no longer need Curl.
+
 = 0.2.1 =
 * Minor change
 
@@ -83,6 +87,9 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 * First public version.
 
 == Upgrade Notice ==
+
+= 0.3 =
+Links in asides are now clickable. Curl is not needed anymore.
 
 = 0.2 =
 Comments in asides : If you want you can manually allow comments on previous asides (after activate the option).
