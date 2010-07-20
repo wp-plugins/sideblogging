@@ -3,7 +3,7 @@
  * Plugin Name: SideBlogging
  * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
  * Description: Display asides in a widget. They can automatically be published to Twitter and Facebook.
- * Version: 0.3
+ * Version: 0.3.1
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
  * Text Domain: sideblogging
@@ -121,8 +121,8 @@ class Sideblogging {
 	}
 	
 	function add_dashboard_widget() {
-            if(current_user_can('manage_options'))
-		wp_add_dashboard_widget('sideblogging_dashboard_widget', __('Asides',self::domain), array(&$this,'dashboard_widget'));
+		if(current_user_can('manage_options'))
+			wp_add_dashboard_widget('sideblogging_dashboard_widget', __('Asides',self::domain), array(&$this,'dashboard_widget'));
 	}
 	
 	function dashboard_widget() {
@@ -424,18 +424,18 @@ class Sideblogging {
 		echo '</select>';
 		echo '</td></tr>';
 		
-		if($options['shortener'] == 'bitly')
+		if($options['shortener'] == 'bitly' || $options['shortener'] == 'jmp')
 		{
 			echo '<tr valign="top">
 			<th scope="row">
-			<label for="sideblogging_shortener_login">Bit.ly Login</label>
+			<label for="sideblogging_shortener_login">API Login</label>
 			</th><td>';
 			echo '<input type="text" class="regular-text" value="'.$options['shortener_login'].'" name="sideblogging[shortener_login]" id="sideblogging_shortener_login" />';
 			echo '</td></tr>';
 					
 			echo '<tr valign="top">
 			<th scope="row">
-			<label for="sideblogging_shortener_password">Bit.ly API Key</label>
+			<label for="sideblogging_shortener_password">API Key</label>
 			</th><td>';
 			echo '<input type="text" class="regular-text" value="'.$options['shortener_password'].'" name="sideblogging[shortener_password]" id="sideblogging_shortener_password" />';
 			echo ' (<a target="_blank" href="http://bit.ly/a/your_api_key">'.__('Find your key',self::domain).'</a>)</td></tr>';

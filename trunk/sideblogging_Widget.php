@@ -66,7 +66,7 @@ class SideBlogging_Widget extends WP_Widget {
                 $title = get_the_title();
                 $title = preg_replace('#http://([a-zA-Z0-9-_./\?=&]+)#i', '<a href="$0">$0</a>', $title);
                 $title = preg_replace('#@([a-zA-Z0-9-_]+)#i', '<a href="http://twitter.com/$1">$0</a>', $title);
-                $title = preg_replace('#\#([a-zA-Z0-9-_]+)#i', '<a href="http://twitter.com/search?q=%23$1">$0</a>', $title);
+                //$title = preg_replace('#\#([a-zA-Z0-9-_]+)#i', '<a href="http://twitter.com/search?q=%23$1">$0</a>', $title);
 
                 echo '<li>'.$title;
 
