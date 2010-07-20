@@ -27,6 +27,7 @@ class Shortlinks {
 		return array(
 			'isgd' => 'is.gd',
 			'bitly' => 'bit.ly',
+			'jmp' => 'jm.p',
 			'googl' => 'goo.gl',
 			'tinyurl' => 'tinyurl.com',
 			'supr' => 'su.pr',
@@ -87,11 +88,11 @@ class Shortlinks {
 			return false;
 	}
 	
-	function bitly($url) {
+	function bitly($url,$domain='bit.ly') {
 		if(empty($this->login) || empty($this->password))
 			return false;
 		
-		$result = $this->http->request('http://api.bit.ly/v3/shorten?login='.$this->login.'&apiKey='.$this->password.'&longUrl='.$url.'&format=json');
+		$result = $this->http->request('http://api.'.$domain.'/v3/shorten?login='.$this->login.'&apiKey='.$this->password.'&longUrl='.$url.'&format=json');
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
 		{
 			$content = json_decode($result['body'],true);
@@ -104,6 +105,10 @@ class Shortlinks {
 			return false;		
 	}
 	
+	function jmp($url) {
+		return $this->bitly($url,'j.mp');
+	}
+	
 	function googl($url) {
 		$result = $this->http->request('http://ggl-shortener.appspot.com/?url='.$url);
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
@@ -114,8 +119,5 @@ class Shortlinks {
 		else
 			return false;		
 	}
-
-	/* Helpers */
-	
 	
 }

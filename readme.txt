@@ -3,8 +3,8 @@ Contributors: cedbv
 Donate link: http://www.boverie.eu/
 Tags: asides,facebook,twitter
 Requires at least: 3.0
-Tested up to: 3.0
-Stable tag: 0.3
+Tested up to: 3.1-alpha
+Stable tag: 0.3.1
 
 Display asides in a widget. They can automatically be published to Twitter and Facebook. Require Wordpress 3 and PHP 5.
 
@@ -29,7 +29,8 @@ Supported shortlink providers :
 
 * Native (blogurl?p=post_ID)
 * is.gd
-* bit.ly (need api key)
+* bit.ly (api key needed)
+* jm.p (api key needed)
 * goo.gl
 * tinyurl.com
 * su.pr
@@ -65,10 +66,14 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 
 == Changelog ==
 
+= 0.3.1 =
+* Fix a regression in public widget
+* New shortlinks providers : jm.p
+
 = 0.3 =
 * Converts text links into clickable links.
 * New permalinks.
-* Twitter features do no longer need Curl.
+* Twitter features no longer need Curl.
 
 = 0.2.1 =
 * Minor change
@@ -87,6 +92,9 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 * First public version.
 
 == Upgrade Notice ==
+
+= 0.3.1 =
+Fix a regression and adds jm.p support.
 
 = 0.3 =
 Links in asides are now clickable. Curl is not needed anymore.
