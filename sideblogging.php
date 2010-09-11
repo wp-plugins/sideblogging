@@ -2,8 +2,8 @@
 /*
  * Plugin Name: SideBlogging
  * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
- * Description: Display asides in a widget. They can automatically be published to Twitter and Facebook.
- * Version: 0.3.1
+ * Description: Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
+ * Version: 0.4.9.9
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
  * Text Domain: sideblogging
@@ -19,6 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * Along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+/*
+TODO:
+- Refactor (especially Twitter/StatusNet integration)
+- Make widget more customizable
 */
 
 // Installation
@@ -79,6 +85,12 @@ class Sideblogging {
 			$options['twitter_consumer_key'] = '57iUTYmR4uTs8Qt4gDX9Ww';
 			$options['twitter_consumer_secret'] = 'weDOZuv1dbaPffO8ZsEsVg25WPpugnIBAhlcsJeM';
 		}
+		if(empty($options['statusnet_url']) || empty($options['statusnet_consumer_key']) || empty($options['statusnet_consumer_secret']))
+		{
+			$options['statusnet_url'] = 'http://identi.ca';
+			$options['statusnet_consumer_key'] = '60ba77cf5561e1f15fadeea3dc7bb021';
+			$options['statusnet_consumer_secret'] = 'b39f9d55f380f42b96744f0143dd212d';
+		}
 		update_option('sideblogging',$options);
 	}
 	
@@ -104,7 +116,8 @@ class Sideblogging {
 		
 		$text = '<h5>'.__('Sideblogging help',self::domain).'</h5>';
 		$text .= '<p><a target="_blank" href="http://twitter.com/apps/new">'.__('Create a Twitter application',self::domain).'</a> (<a target="_blank" href="http://www.youtube.com/watch?v=TEpR1M1R9nI">'.__('video tutorial',self::domain).'</a>)<br />';
-		$text .= '<a target="_blank" href="http://www.facebook.com/developers/apps.php">'.__('Create a Facebook application',self::domain).'</a> (<a target="_blank" href="http://www.youtube.com/watch?v=0EH2WQdnvUg">'.__('video tutorial',self::domain).'</a>)</p>';
+		$text .= '<a target="_blank" href="http://www.facebook.com/developers/apps.php">'.__('Create a Facebook application',self::domain).'</a> (<a target="_blank" href="http://www.youtube.com/watch?v=0EH2WQdnvUg">'.__('video tutorial',self::domain).'</a>)<br />';
+		$text .= '<a target="_blank" href="http://identi.ca/settings/oauthapps/new">'.__('Create a Identi.ca application',self::domain).'</a></p>';
 		
 		$text .= '<h5>'.__('About Facebook',self::domain).'</h5>';
 		$text .= '<p>'.__('For Facebook, you may need to modify the URL Connect',self::domain).'.<br />
@@ -233,6 +246,24 @@ class Sideblogging {
 			$url = 'https://graph.facebook.com/oauth/authorize?client_id='.$options['facebook_consumer_key'].'&redirect_uri='.SIDEBLOGGING_OAUTH_CALLBACK.'&scope=publish_stream,offline_access';
 			wp_redirect($url);
 		}
+		else if(isset($_GET['action']) && $_GET['action'] == 'connect_to_statusnet' && wp_verify_nonce($_GET['_wpnonce'],'connect_to_statusnet')) // Twitter redirection
+		{
+			require_once('libs/statusnetoauth.php');
+			$options = get_option('sideblogging');
+			$connection = new SidebloggingStatusNetOAuth($options['statusnet_url'],$options['statusnet_consumer_key'], $options['statusnet_consumer_secret']);
+			$request_token = $connection->getRequestToken(SIDEBLOGGING_OAUTH_CALLBACK); // Génère des notices en cas d'erreur de connexion
+			if(200 == $connection->http_code)
+			{
+				$token = $request_token['oauth_token'];
+				set_transient('oauth_token', $token, 86400);
+				set_transient('oauth_token_secret', $request_token['oauth_token_secret'], 86400);
+				
+				$url = $connection->getAuthorizeURL($token,false);
+				wp_redirect($url.'&oauth_access_type=write');
+			}
+			else
+				wp_die(__('The StatusNet installation is currently unavailable. Please check your keys or try again later.',self::domain));
+		}
 	}
 	
 	/* Publie les nouvelles brèves sur les réseaux sociaux */
@@ -267,6 +298,19 @@ class Sideblogging {
 
 				$connection = new SidebloggingTwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret'],
 							$options['twitter_token']['oauth_token'],$options['twitter_token']['oauth_token_secret']);
+				$connection->post('statuses/update', array('status' => $content));
+			}
+
+			if(isset($options['statusnet_token']) && !empty($options['statusnet_token'])) // StatusNet est configuré
+			{
+				require_once 'libs/statusnetoauth.php';
+				$content = $post->post_title;
+				
+				if(strlen($post->post_content) > 0)
+					$content .= ' '.$shortlink;
+
+				$connection = new SidebloggingStatusNetOAuth($options['statusnet_url'], $options['statusnet_consumer_key'], $options['statusnet_consumer_secret'],
+							$options['statusnet_token']['oauth_token'],$options['statusnet_token']['oauth_token_secret']);
 				$connection->post('statuses/update', array('status' => $content));
 			}
 			
@@ -324,11 +368,25 @@ class Sideblogging {
 			}
 			else
 				echo '<p>'.__('No Twitter account registered',self::domain).'.</p>';
+			
+			require_once 'libs/statusnetoauth.php';
+			echo '<h3>StatusNet</h3>';
+			if(isset($options['statusnet_token']['oauth_token']))
+			{
+				$connection = new SidebloggingStatusNetOAuth($options['statusnet_url'], $options['statusnet_consumer_key'], $options['statusnet_consumer_secret'],
+							$options['statusnet_token']['oauth_token'],$options['statusnet_token']['oauth_token_secret']);
+				$content = $connection->get('account/verify_credentials');
+				echo '<pre>';
+				print_r($content);
+				echo '</pre>';
+			}
+			else
+				echo '<p>'.__('No StatusNet account registered',self::domain).'.</p>';
 
 			echo '</div>';
 			return;
 		}
-		if(isset($_GET['oauth_verifier'])) // Twitter vérification finale
+		else if(isset($_GET['oauth_verifier'])) // Twitter vérification finale
 		{
 			$options = get_option('sideblogging');
 			require_once('libs/twitteroauth.php');
@@ -350,11 +408,25 @@ class Sideblogging {
 			else
 				echo '<div class="error"><p><strong>'.__('Error during the connection with Twitter',self::domain).'.</strong></p></div>';
 		}
-		else if(isset($_GET['action']) && $_GET['action'] == 'disconnect_from_twitter' && wp_verify_nonce($_GET['_wpnonce'], 'disconnect_from_twitter')) // Déconnexion de Twitter
+		else if(isset($_GET['oauth_token'])) // StatusNet vérification finale
 		{
 			$options = get_option('sideblogging');
-			$options['twitter_token'] = '';
-			update_option('sideblogging',$options);
+			require_once('libs/statusnetoauth.php');
+			$connection = new SidebloggingStatusNetOAuth($options['statusnet_url'],$options['statusnet_consumer_key'], $options['statusnet_consumer_secret'], get_transient('oauth_token'), get_transient('oauth_token_secret'));
+			$access_token = $connection->getAccessToken($_GET['oauth_token']);
+
+			delete_transient('oauth_token');
+			delete_transient('oauth_token_secret');
+			
+			if (200 == $connection->http_code)
+			{
+				$options['statusnet_token']['oauth_token'] = esc_attr($access_token['oauth_token']);
+				$options['statusnet_token']['oauth_token_secret'] = esc_attr($access_token['oauth_token_secret']);				
+				update_option('sideblogging',$options);
+				echo '<div class="updated"><p><strong>'.__('StatusNet account registered',self::domain).'.</strong></p></div>';
+			}
+			else
+				echo '<div class="error"><p><strong>'.__('Error during the connection with StatusNet installation',self::domain).'.</strong></p></div>';
 		}
 		else if(isset($_GET['code'])) // Facebook vérification finale
 		{
@@ -376,6 +448,18 @@ class Sideblogging {
 			}
 			else
 				echo '<div class="error"><p><strong>'.__('Error during the connection with Facebook',self::domain).'</strong></p></div>';
+		}
+		else if(isset($_GET['action']) && $_GET['action'] == 'disconnect_from_twitter' && wp_verify_nonce($_GET['_wpnonce'], 'disconnect_from_twitter')) // Déconnexion de Twitter
+		{
+			$options = get_option('sideblogging');
+			$options['twitter_token'] = '';
+			update_option('sideblogging',$options);
+		}
+		else if(isset($_GET['action']) && $_GET['action'] == 'disconnect_from_statusnet' && wp_verify_nonce($_GET['_wpnonce'], 'disconnect_from_statusnet')) // Déconnexion de StatusNet
+		{
+			$options = get_option('sideblogging');
+			$options['statusnet_token'] = '';
+			update_option('sideblogging',$options);
 		}
 		else if(isset($_GET['action']) && $_GET['action'] == 'disconnect_from_facebook' && wp_verify_nonce($_GET['_wpnonce'], 'disconnect_from_facebook')) // Déconnexion de Facebook
 		{
@@ -400,7 +484,7 @@ class Sideblogging {
 		</th><td>';
 		echo '<select name="sideblogging[comments]" id="sideblogging_comments">';
 		echo '<option value="0">OFF</option>';
-		echo '<option '.selected(1,$options['comments']).' value="1">ON</option>';
+		echo '<option '.selected(1,$options['comments'],false).' value="1">ON</option>';
 		echo '</select>';
 		echo '</td></tr>';
 				
@@ -424,7 +508,7 @@ class Sideblogging {
 		echo '</select>';
 		echo '</td></tr>';
 		
-		if($options['shortener'] == 'bitly' || $options['shortener'] == 'jmp')
+		if(in_array($options['shortener'],array('bitly','jmp')))
 		{
 			echo '<tr valign="top">
 			<th scope="row">
@@ -445,13 +529,13 @@ class Sideblogging {
 		echo '<h3>'.__('Applications Settings',self::domain).'</h3>';
 
 		echo '<table class="form-table">';
+		
 		echo '<tr valign="top">
 		<th scope="row">
 		<label for="sideblogging_twitter_consumer_key">Twitter Consumer Key</label>
 		</th><td>';
 		echo '<input type="text" class="regular-text" value="'.$options['twitter_consumer_key'].'" name="sideblogging[twitter_consumer_key]" id="sideblogging_twitter_consumer_key" />';
 		echo '</td></tr>';
-		
 		echo '<tr valign="top">
 		<th scope="row">
 		<label for="sideblogging_twitter_consumer_secret">Twitter Consumer Secret</label>
@@ -465,21 +549,42 @@ class Sideblogging {
 		</th><td>';
 		echo '<input type="text" class="regular-text" value="'.$options['facebook_consumer_key'].'" name="sideblogging[facebook_consumer_key]" id="sideblogging_facebook_consumer_key" />';
 		echo '</td></tr>';
-		
 		echo '<tr valign="top">
 		<th scope="row">
 		<label for="sideblogging_facebook_consumer_secret">Facebook Secret Key</label>
 		</th><td>';
 		echo '<input type="text" class="regular-text" value="'.$options['facebook_consumer_secret'].'" name="sideblogging[facebook_consumer_secret]" id="sideblogging_facebook_consumer_secret" />';
 		echo '</td></tr>';
+		
+		echo '<tr valign="top">
+		<th scope="row">
+		<label for="sideblogging_statusnet_url">StatusNet URL</label>
+		</th><td>';
+		echo '<input type="text" class="regular-text" value="'.$options['statusnet_url'].'" name="sideblogging[statusnet_url]" id="sideblogging_statusnet_url" />';
+		echo ' <a href="#" onclick="document.getElementById(\'sideblogging_statusnet_url\').value = \'http://identi.ca/\';return false;">Identi.ca</a>';
+		echo '</td></tr>';
+		echo '<tr valign="top">
+		<th scope="row">
+		<label for="sideblogging_statusnet_consumer_key">StatusNet Consumer Key</label>
+		</th><td>';
+		echo '<input type="text" class="regular-text" value="'.$options['statusnet_consumer_key'].'" name="sideblogging[statusnet_consumer_key]" id="sideblogging_statusnet_consumer_key" />';
+		echo '</td></tr>';
+		echo '<tr valign="top">
+		<th scope="row">
+		<label for="sideblogging_statusnet_consumer_secret">StatusNet Consumer Secret</label>
+		</th><td>';
+		echo '<input type="text" class="regular-text" value="'.$options['statusnet_consumer_secret'].'" name="sideblogging[statusnet_consumer_secret]" id="sideblogging_statusnet_consumer_secret" />';
+		echo '</td></tr>';
+		
 		echo '</table>';
 		
-
 		echo '<p>'.__('Don\'t forget to look at the contextual help (in the top right of page) for more informations about keys.',self::domain).'</p>';
 		echo '<p class="submit"><input type="submit" class="button-primary" value="'.__('Save Changes').'" /></p>';
 		
 		echo '</form>';
 		
+		
+		// Twitter
 		echo '<h3>'.__('Republish on Twitter',self::domain).'</h3>';
 
 		if(empty($options['twitter_consumer_key']) || empty($options['twitter_consumer_secret']))
@@ -499,13 +604,13 @@ class Sideblogging {
 			echo '<a href="'.wp_nonce_url('options-general.php?page=sideblogging&action=disconnect_from_twitter','disconnect_from_twitter').'">'.__('Change account or disable',self::domain).'</a>.</p>';
 		}
 		
-
+		// Facebook
 		echo '<h3>'.__('Republish on Facebook',self::domain).'</h3>';
 
-                if(!extension_loaded('openssl'))
-                {
-                        echo '<p>'.__('Sorry, you need OpenSLL to connect with Facebook',self::domain).'.</p>';
-                }
+		if(!extension_loaded('openssl'))
+		{
+			echo '<p>'.__('Sorry, you need OpenSLL to connect with Facebook',self::domain).'.</p>';
+		}
 		else if(empty($options['facebook_consumer_key']) || empty($options['facebook_consumer_secret']))
 		{
 			echo '<p>'.__('You must configure Facebook app to be able to sign-in',self::domain).'.</p>';
@@ -522,6 +627,26 @@ class Sideblogging {
 			echo '<p>'.sprintf(__('You are connected to Facebook as %s',self::domain),'<strong>'.$options['facebook_token']['name'].'</strong>').'. ';
 			echo '<a href="'.wp_nonce_url('options-general.php?page=sideblogging&action=disconnect_from_facebook','disconnect_from_facebook').'">'.__('Change account or disable',self::domain).'</a>.</p>';
 		}
+		
+		// StatusNet
+		echo '<h3>'.__('Republish on a Identi.ca (or other StatusNet installation)',self::domain).'</h3>';
+		if(empty($options['statusnet_url']) || empty($options['statusnet_consumer_key']) || empty($options['statusnet_consumer_secret']))
+		{
+			echo '<p>'.__('You must configure StatusNet app to be able to sign-in',self::domain).'.</p>';
+		}
+		else if(empty($options['statusnet_token']))
+		{
+			echo '<p>'.__('To automatically publish your asides on StatusNet, sign-in below:',self::domain).'</p>';
+			echo '<p><a href="'.wp_nonce_url('options-general.php?page=sideblogging&action=connect_to_statusnet','connect_to_statusnet').'">
+				<img src="'.SIDEBLOGGING_URL.'/images/statusnet.png" alt="Connexion à StatusNet" />
+				</a></p>';
+		}
+		else
+		{
+			echo '<p>'.__('You are connected to StatusNet',self::domain).'. ';
+			echo '<a href="'.wp_nonce_url('options-general.php?page=sideblogging&action=disconnect_from_statusnet','disconnect_from_statusnet').'">'.__('Change account or disable',self::domain).'</a>.</p>';
+		}
+		
 		echo '</div>';
 	}
 	
@@ -540,12 +665,18 @@ class Sideblogging {
 
 		if($options_old['facebook_consumer_key'] != $options['facebook_consumer_key'] || $options_old['facebook_consumer_secret'] != $options['facebook_consumer_secret'])
 			$options['facebook_token'] = '';
+			
+		if($options_old['statusnet_url'] != $options['statusnet_url'] || $options_old['statusnet_consumer_key'] != $options['statusnet_consumer_key'] || $options_old['statusnet_consumer_secret'] != $options['statusnet_consumer_secret'])
+			$options['statusnet_token'] = '';
 
 		// Clean form option
 		$options['twitter_consumer_key'] = esc_attr($options['twitter_consumer_key']);
 		$options['twitter_consumer_secret'] = esc_attr($options['twitter_consumer_secret']);
 		$options['facebook_consumer_key'] = esc_attr($options['facebook_consumer_key']);
 		$options['facebook_consumer_secret'] = esc_attr($options['facebook_consumer_secret']);
+		$options['statusnet_url'] = esc_attr($options['statusnet_url']);
+		$options['statusnet_consumer_key'] = esc_attr($options['statusnet_consumer_key']);
+		$options['statusnet_consumer_secret'] = esc_attr($options['statusnet_consumer_secret']);
 		
 		$options['shortener'] = esc_attr($options['shortener']);
 		$options['shortener_login'] = (isset($options['shortener_login'])) ? esc_attr($options['shortener_login']) : $options_old['shortener_login'];

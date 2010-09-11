@@ -6,7 +6,8 @@ Requires at least: 3.0
 Tested up to: 3.1-alpha
 Stable tag: 0.3.1
 
-Display asides in a widget. They can automatically be published to Twitter and Facebook. Require Wordpress 3 and PHP 5.
+Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
+Require Wordpress 3 and PHP 5.
 
 == Description ==
 
@@ -19,7 +20,7 @@ Require **Wordpress 3** and **PHP 5**.
 Aside content must be write in post title.
 If you write something in post content (like a video embed), a link to this content will be displayed after the aside.
 
-Asides can be automatically posted on Twitter and/or Facebook.        
+Asides can be automatically posted on Twitter and/or Facebook and/or Identica (Status.Net).
 A Twitter app is preconfigured.           
 For Facebook, you need to create your own application. Video tutorial included in contextual help on settings page.
 
@@ -65,6 +66,13 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 4. Public widget
 
 == Changelog ==
+
+= 0.5 =
+* StatusNet integration (include identi.ca)
+* Archive page
+* RSS Feed
+
+A more customizable widget is coming...
 
 = 0.3.1 =
 * Fix a regression in public widget
