@@ -13,9 +13,9 @@ class SideBlogging_Widget extends WP_Widget {
     function form($instance) {
         $title = isset($instance['title']) ? esc_attr($instance['title']) : '';
         $number = isset($instance['number']) ? intval($instance['number']) : '';
-            
-        if($number <= 0)
-            $number = 5;
+        if($number <= 0) $number = 5;
+		$displayrss = isset($instance['displayrss']) ? $instance['displayrss'] : false;
+		$displayarchive = isset($instance['displayarchive']) ? $instance['displayarchive'] : false;
             
         echo '<p>';
         echo '<label for="'.$this->get_field_id('title').'">';
@@ -26,9 +26,16 @@ class SideBlogging_Widget extends WP_Widget {
         _e('Number of asides to display:',Sideblogging::domain);
         echo ' <select name="'.$this->get_field_name('number').'" id="'.$this->get_field_id('number').'" class="widefat">';
         foreach(range(1,20) as $n)
-            echo '<option value="'.$n.'" '.selected($number,$n).'>'.$n.'</option>';
-        echo '</select></label>';
-        echo '</p>';
+            echo '<option value="'.$n.'" '.selected($number,$n,false).'>'.$n.'</option>';
+        echo '</select></label></p>';
+		echo '<p>';
+		echo '<label for="'.$this->get_field_id('displayrss').'">';
+		echo '<input '.checked($displayrss,true,false).' class="checkbox" type="checkbox" name="'.$this->get_field_name('displayrss').'" id="'.$this->get_field_id('displayrss').'" />';
+		echo ' '.__('Display a link to a RSS feed',Sideblogging::domain).'</label>';
+		echo '<br /><label for="'.$this->get_field_id('displayarchive').'">';
+		echo '<input '.checked($displayarchive,true,false).' class="checkbox" type="checkbox" name="'.$this->get_field_name('displayarchive').'" id="'.$this->get_field_id('displayarchive').'" />';
+		echo ' '.__('Display a link to an archive page',Sideblogging::domain).'</label>';
+		echo '</p>';
     }
     
     /** @see WP_Widget::update */
@@ -36,6 +43,8 @@ class SideBlogging_Widget extends WP_Widget {
         $instance = $old_instance;
         $instance['title'] = strip_tags($new_instance['title']);
         $instance['number'] = intval($new_instance['number']);
+        $instance['displayrss'] = isset($new_instance['displayrss']) ? true : false;
+        $instance['displayarchive'] = isset($new_instance['displayarchive']) ? true : false;
         return $instance;
     }
 
@@ -49,28 +58,41 @@ class SideBlogging_Widget extends WP_Widget {
             $title = __('Asides',Sideblogging::domain);
         if($number <= 0)
             $number = 5;
-    
+			
+		$displayrss = isset($instance['displayrss']) ? $instance['displayrss'] : false;
+		$displayarchive = isset($instance['displayarchive']) ? $instance['displayarchive'] : false;
+		
         echo $before_widget;
-        echo $before_title.$title.$after_title;
-        global $query_string;
-        query_posts('post_type=asides&posts_per_page='.$number.'&orderby=date&order=DESC');
-
-        //The Loop
-        if (have_posts())
+        echo $before_title;
+		echo $title;
+		if($displayrss == true) 
+		{
+			echo ' <a href="';
+			if (get_option('permalink_structure') != '')
+				echo get_bloginfo('url').'/asides/feed/';
+			else
+				echo get_bloginfo('rss2_url').'?post_type=asides';
+			echo '"><img src="'.SIDEBLOGGING_URL.'/images/rss.png" alt="RSS" title="RSS" /></a>';
+		}
+		echo $after_title;
+	
+		$asides = new WP_Query(array('post_type' => 'asides','post_per_page' => $number,'orderby' => 'date','order' => 'DESC'));
+       		
+	   //The Loop
+        if ($asides->have_posts())
         {
             echo '<ul>';
-            while ( have_posts() )
+            while ( $asides->have_posts() )
             {
-                the_post();
+                $asides->the_post();
                 $content = get_the_content();
                 $title = get_the_title();
                 $title = preg_replace('#http://([a-zA-Z0-9-_./\?=&]+)#i', '<a href="$0">$0</a>', $title);
                 $title = preg_replace('#@([a-zA-Z0-9-_]+)#i', '<a href="http://twitter.com/$1">$0</a>', $title);
-                //$title = preg_replace('#\#([a-zA-Z0-9-_]+)#i', '<a href="http://twitter.com/search?q=%23$1">$0</a>', $title);
 
                 echo '<li>'.$title;
 
-                if(strlen($content) > 0)
+                if(strlen(strip_tags(trim($content),'<img><audio><video><embed><object>')) > 0)
                 {
                     if(preg_match('#youtube.com|dailymotion.com|wat.tv|.flv|&lt;video|<video#',$content))
                     {
@@ -105,8 +127,17 @@ class SideBlogging_Widget extends WP_Widget {
                 echo '</li>';
             }
             echo '</ul>';
+			
+			if($displayarchive == true) 
+			{
+				echo '<p class="sideblogging_more"><a href="';
+				if (get_option('permalink_structure') != '')
+					echo get_bloginfo('url').'/asides/';
+				else
+					echo get_bloginfo('url').'?post_type=asides';
+				echo '">'.__('More',Sideblogging::domain).' &raquo;</a></p>';
+			}
         }
-        wp_reset_query();
         echo $after_widget;
     }
 }

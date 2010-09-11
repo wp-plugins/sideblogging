@@ -14,13 +14,13 @@ require_once('OAuth.php');
 /**
  * Twitter OAuth class
  */
-class SidebloggingTwitterOAuth {
+class SidebloggingStatusNetOAuth {
   /* Contains the last HTTP status code returned. */
   public $http_code;
   /* Contains the last API call. */
   public $url;
   /* Set up the API root URL. */
-  public $host = "https://api.twitter.com/1/";
+  public $host;
   /* Set timeout default. */
   public $timeout = 30;
   /* Set connect timeout. */
@@ -39,10 +39,10 @@ class SidebloggingTwitterOAuth {
   /**
    * Set API URLS
    */
-  function accessTokenURL()  { return 'http://twitter.com/oauth/access_token'; }
-  function authenticateURL() { return 'https://twitter.com/oauth/authenticate'; }
-  function authorizeURL()    { return 'https://twitter.com/oauth/authorize'; }
-  function requestTokenURL() { return 'http://twitter.com/oauth/request_token'; }
+  function accessTokenURL()  { return $this->host.'oauth/access_token'; }
+  function authenticateURL() { return $this->host.'oauth/authenticate'; }
+  function authorizeURL()    { return $this->host.'oauth/authorize'; }
+  function requestTokenURL() { return $this->host.'oauth/request_token'; }
 
   /**
    * Debug helpers
@@ -51,9 +51,10 @@ class SidebloggingTwitterOAuth {
   function lastAPICall() { return $this->last_api_call; }
 
   /**
-   * construct TwitterOAuth object
+   * construct SidebloggingStatusNetOAuth object
    */
-  function __construct($consumer_key, $consumer_secret, $oauth_token = NULL, $oauth_token_secret = NULL) {
+  function __construct($host, $consumer_key, $consumer_secret, $oauth_token = NULL, $oauth_token_secret = NULL) {
+	$this->host = $host.'/api/';
     $this->sha1_method = new OAuthSignatureMethod_HMAC_SHA1();
     $this->consumer = new OAuthConsumer($consumer_key, $consumer_secret);
     if (!empty($oauth_token) && !empty($oauth_token_secret)) {
