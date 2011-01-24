@@ -55,10 +55,10 @@ class SidebloggingStatusNetOAuth {
    */
   function __construct($host, $consumer_key, $consumer_secret, $oauth_token = NULL, $oauth_token_secret = NULL) {
 	$this->host = $host.'/api/';
-    $this->sha1_method = new OAuthSignatureMethod_HMAC_SHA1();
-    $this->consumer = new OAuthConsumer($consumer_key, $consumer_secret);
+    $this->sha1_method = new SBOAuthSignatureMethod_HMAC_SHA1();
+    $this->consumer = new SBOAuthConsumer($consumer_key, $consumer_secret);
     if (!empty($oauth_token) && !empty($oauth_token_secret)) {
-      $this->token = new OAuthConsumer($oauth_token, $oauth_token_secret);
+      $this->token = new SBOAuthConsumer($oauth_token, $oauth_token_secret);
     } else {
       $this->token = NULL;
     }
@@ -76,8 +76,8 @@ class SidebloggingStatusNetOAuth {
       $parameters['oauth_callback'] = $oauth_callback;
     } 
     $request = $this->oAuthRequest($this->requestTokenURL(), 'GET', $parameters);
-    $token = OAuthUtil::parse_parameters($request);
-	$this->token = new OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
+    $token = SBOAuthUtil::parse_parameters($request);
+	$this->token = new SBOAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
     return $token;
   }
 
@@ -112,8 +112,8 @@ class SidebloggingStatusNetOAuth {
       $parameters['oauth_verifier'] = $oauth_verifier;
     }
     $request = $this->oAuthRequest($this->accessTokenURL(), 'GET', $parameters);
-    $token = OAuthUtil::parse_parameters($request);
-    $this->token = new OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
+    $token = SBOAuthUtil::parse_parameters($request);
+    $this->token = new SBOAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
     return $token;
   }
 
@@ -132,8 +132,8 @@ class SidebloggingStatusNetOAuth {
     $parameters['x_auth_password'] = $password;
     $parameters['x_auth_mode'] = 'client_auth';
     $request = $this->oAuthRequest($this->accessTokenURL(), 'POST', $parameters);
-    $token = OAuthUtil::parse_parameters($request);
-    $this->token = new OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
+    $token = SBOAuthUtil::parse_parameters($request);
+    $this->token = new SBOAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
     return $token;
   }
 
@@ -177,7 +177,7 @@ class SidebloggingStatusNetOAuth {
     if (strrpos($url, 'https://') !== 0 && strrpos($url, 'http://') !== 0) {
       $url = "{$this->host}{$url}.{$this->format}";
     }
-    $request = OAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $parameters);
+    $request = SBOAuthRequest::from_consumer_and_token($this->consumer, $this->token, $method, $url, $parameters);
     $request->sign_request($this->sha1_method, $this->consumer, $this->token);
     switch ($method) {
     case 'GET':
