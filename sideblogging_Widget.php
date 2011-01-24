@@ -71,7 +71,7 @@ class SideBlogging_Widget extends WP_Widget {
 			if (get_option('permalink_structure') != '')
 				echo get_bloginfo('url').'/asides/feed/';
 			else
-				echo get_bloginfo('rss2_url').'?post_type=asides';
+				echo get_bloginfo('rss2_url').'&amp;post_type=asides';
 			echo '"><img src="'.SIDEBLOGGING_URL.'/images/rss.png" alt="RSS" title="RSS" /></a>';
 		}
 		echo $after_title;

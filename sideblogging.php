@@ -3,7 +3,7 @@
  * Plugin Name: SideBlogging
  * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
  * Description: Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
- * Version: 0.4.9.9
+ * Version: 0.5
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
  * Text Domain: sideblogging
@@ -129,7 +129,7 @@ class Sideblogging {
 				</ul>';
 				
 		$text .= '<h5>'.__('Debug',self::domain).'</h5>';
-		$text .= '<p><a href="options-general.php?page=sideblogging&debug=1">'.__('Debug information',self::domain).'</a></p>';
+		$text .= '<p><a href="options-general.php?page=sideblogging&amp;debug=1">'.__('Debug information',self::domain).'</a></p>';
 		add_contextual_help($screen,$text);
 	}
 	
@@ -141,7 +141,7 @@ class Sideblogging {
 	function dashboard_widget() {
 		echo '<form id="sideblogging_dashboard_form" action="" method="post" class="dashboard-widget-control-form">';
 		wp_nonce_field('sideblogging-quickpost');
-		echo '<p style=height:20px;display:none;" id="sideblogging-status"></p>';
+		echo '<div style="display:none;" id="sideblogging-status"></div>';
 		//echo '<p><label for="sideblogging-title">Statut</label><br />';
 		echo '<textarea name="sideblogging-title" id="sideblogging-title" style="width:100%"></textarea><br />';
 		echo '<span id="sideblogging-count">140</span> '.__('characters left',self::domain).'.<br />';
@@ -170,7 +170,7 @@ class Sideblogging {
 					if(response == 'ok')
 					{
 						$('#sideblogging-title').val('');
-						$('#sideblogging-status').html('<strong><?php _e('Aside published',self::domain); ?>.</strong>')
+						$('#sideblogging-status').html('<p><?php _e('Aside published',self::domain); ?>.</p>')
 						.addClass('updated').removeClass('error')
 						.show(200);
 					}
@@ -180,7 +180,7 @@ class Sideblogging {
 					}
 					else
 					{
-						$('#sideblogging-status').html('<strong><?php _e('An error occurred',self::domain); ?>.</strong>')
+						$('#sideblogging-status').html('<p><?php _e('An error occurred',self::domain); ?>.</p>')
 						.addClass('error').removeClass('updated')
 						.show(200);
 					}
@@ -215,7 +215,7 @@ class Sideblogging {
 			echo $id;
 		else if($id  != 0) // Publication immédiate OK
 			echo 'ok';
-		else // Echeck publication
+		else // Echec publication
 			echo '0';
 		exit;
 	}
@@ -227,7 +227,7 @@ class Sideblogging {
 			require_once('libs/twitteroauth.php');
 			$options = get_option('sideblogging');
 			$connection = new SidebloggingTwitterOAuth($options['twitter_consumer_key'], $options['twitter_consumer_secret']);
-			$request_token = $connection->getRequestToken(SIDEBLOGGING_OAUTH_CALLBACK); // Génère des notices en cas d'erreur de connexion
+			$request_token = $connection->getRequestToken(SIDEBLOGGING_OAUTH_CALLBACK.'&site=twitter'); // Génère des notices en cas d'erreur de connexion
 			if(200 == $connection->http_code)
 			{
 				$token = $request_token['oauth_token'];
@@ -251,7 +251,7 @@ class Sideblogging {
 			require_once('libs/statusnetoauth.php');
 			$options = get_option('sideblogging');
 			$connection = new SidebloggingStatusNetOAuth($options['statusnet_url'],$options['statusnet_consumer_key'], $options['statusnet_consumer_secret']);
-			$request_token = $connection->getRequestToken(SIDEBLOGGING_OAUTH_CALLBACK); // Génère des notices en cas d'erreur de connexion
+			$request_token = $connection->getRequestToken(SIDEBLOGGING_OAUTH_CALLBACK.'&site=statusnet'); // Génère des notices en cas d'erreur de connexion
 			if(200 == $connection->http_code)
 			{
 				$token = $request_token['oauth_token'];
@@ -386,7 +386,7 @@ class Sideblogging {
 			echo '</div>';
 			return;
 		}
-		else if(isset($_GET['oauth_verifier'])) // Twitter vérification finale
+		else if(isset($_GET['oauth_verifier']) && $_GET['site'] == 'twitter') // Twitter vérification finale
 		{
 			$options = get_option('sideblogging');
 			require_once('libs/twitteroauth.php');
@@ -408,20 +408,25 @@ class Sideblogging {
 			else
 				echo '<div class="error"><p><strong>'.__('Error during the connection with Twitter',self::domain).'.</strong></p></div>';
 		}
-		else if(isset($_GET['oauth_token'])) // StatusNet vérification finale
+		else if(isset($_GET['oauth_verifier']) && $_GET['site'] == 'statusnet') // StatusNet vérification finale
 		{
 			$options = get_option('sideblogging');
 			require_once('libs/statusnetoauth.php');
 			$connection = new SidebloggingStatusNetOAuth($options['statusnet_url'],$options['statusnet_consumer_key'], $options['statusnet_consumer_secret'], get_transient('oauth_token'), get_transient('oauth_token_secret'));
-			$access_token = $connection->getAccessToken($_GET['oauth_token']);
+			$access_token = $connection->getAccessToken($_GET['oauth_verifier']);
 
 			delete_transient('oauth_token');
 			delete_transient('oauth_token_secret');
-			
+
 			if (200 == $connection->http_code)
 			{
 				$options['statusnet_token']['oauth_token'] = esc_attr($access_token['oauth_token']);
-				$options['statusnet_token']['oauth_token_secret'] = esc_attr($access_token['oauth_token_secret']);				
+				$options['statusnet_token']['oauth_token_secret'] = esc_attr($access_token['oauth_token_secret']);
+				
+				$content = $connection->get('account/verify_credentials');
+				$options['statusnet_token']['user_id'] = intval($content->id);
+				$options['statusnet_token']['screen_name'] = esc_attr($content->screen_name);
+				
 				update_option('sideblogging',$options);
 				echo '<div class="updated"><p><strong>'.__('StatusNet account registered',self::domain).'.</strong></p></div>';
 			}
@@ -643,7 +648,7 @@ class Sideblogging {
 		}
 		else
 		{
-			echo '<p>'.__('You are connected to StatusNet',self::domain).'. ';
+			echo '<p>'.sprintf(__('You are connected to StatusNet as %s',self::domain),'<strong>@'.$options['statusnet_token']['screen_name'].'</strong>').'. ';
 			echo '<a href="'.wp_nonce_url('options-general.php?page=sideblogging&action=disconnect_from_statusnet','disconnect_from_statusnet').'">'.__('Change account or disable',self::domain).'</a>.</p>';
 		}
 		

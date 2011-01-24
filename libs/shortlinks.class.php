@@ -5,25 +5,25 @@ class Shortlinks {
 	private $login;
 	private $password;
 	
-	function __construct($service='') {
+	public function __construct() {
 		if(!class_exists('WP_Http'))
 			include_once( ABSPATH . WPINC. '/class-http.php' );			
 		$this->http = new WP_Http;
 	}
 	
-	function setApi($login,$password) {
+	public function setApi($login,$password='') {
 		$this->login = $login;
 		$this->password = $password;
 	}
 	
-	function getLink($url,$service='') {
+	public function getLink($url,$service) {
 		if(method_exists($this,$service))
 			return $this->$service(urlencode($url));
 		else
 			return false;
 	}
 	
-	function getSupportedServices() {
+	public function getSupportedServices() {
 		return array(
 			'isgd' => 'is.gd',
 			'bitly' => 'bit.ly',
@@ -39,7 +39,7 @@ class Shortlinks {
 
 	/* Services function */
 	
-	function isgd($url) {
+	private function isgd($url) {
 		$result = $this->http->request('http://is.gd/api.php?longurl='.$url);
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
 			return $result['body'];
@@ -47,7 +47,7 @@ class Shortlinks {
 			return false;
 	}
 	
-	function tinyurl($url) {
+	private function tinyurl($url) {
 		$result = $this->http->request('http://tinyurl.com/api-create.php?url='.$url);
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
 			return $result['body'];
@@ -55,7 +55,7 @@ class Shortlinks {
 			return false;
 	}
 	
-	function supr($url) {
+	private function supr($url) {
 		$result = $this->http->request('http://su.pr/api/simpleshorten?version=1.0&url='.$url);
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
 			return $result['body'];
@@ -63,7 +63,7 @@ class Shortlinks {
 			return false;
 	}
 		
-	function cligs($url) {
+	private function cligs($url) {
 		$result = $this->http->request('http://cli.gs/api/v1/cligs/create?url='.$url);
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
 			return $result['body'];
@@ -71,7 +71,7 @@ class Shortlinks {
 			return false;
 	}
 	
-	function fongs($url) {
+	private function fongs($url) {
 		$result = $this->http->request('http://fon.gs/create.php?url='.$url);
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
 			return trim(strstr($result['body'],' '));
@@ -79,7 +79,7 @@ class Shortlinks {
 			return false;
 	}
 
-	function twurlnl($url) {
+	private function twurlnl($url) {
 		$body = array('link' => array('url' => urldecode($url)));
 		$result = $this->http->request('http://tweetburner.com/links', array( 'method' => 'POST', 'body' => $body) );
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
@@ -88,7 +88,7 @@ class Shortlinks {
 			return false;
 	}
 	
-	function bitly($url,$domain='bit.ly') {
+	private function bitly($url,$domain='bit.ly') {
 		if(empty($this->login) || empty($this->password))
 			return false;
 		
@@ -105,11 +105,11 @@ class Shortlinks {
 			return false;		
 	}
 	
-	function jmp($url) {
+	private function jmp($url) {
 		return $this->bitly($url,'j.mp');
 	}
-	
-	function googl($url) {
+	/*
+	private function googl($url) {
 		$result = $this->http->request('http://ggl-shortener.appspot.com/?url='.$url);
 		if(!is_wp_error($result) && $result['response']['code'] == 200)
 		{
@@ -119,5 +119,22 @@ class Shortlinks {
 		else
 			return false;		
 	}
+	*/
+
+	private function googl($url) {
 	
+		if(!empty($this->login))
+			$key = 'key='.$this->login;
+		else
+			$key = '?key=AIzaSyCH6NtebjrGRYClJa7MfFnA1DhC06GcSpU';
+	
+		$headers = array('Content-Type' => 'application/json');
+		$body = array('longUrl' => urldecode($url));
+		$body = json_encode($body);
+		$result = $this->http->request('https://www.googleapis.com/urlshortener/v1/url'.$key, array('method' => 'POST', 'headers' => $headers, 'body' => $body, 'sslverify' => false) );
+		if(!is_wp_error($result) && $result['response']['code'] == 200)
+			return json_decode($result['body'])->id;
+		else
+			return false;
+	}
 }
