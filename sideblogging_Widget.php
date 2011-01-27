@@ -76,7 +76,7 @@ class SideBlogging_Widget extends WP_Widget {
 		}
 		echo $after_title;
 	
-		$asides = new WP_Query(array('post_type' => 'asides','post_per_page' => $number,'orderby' => 'date','order' => 'DESC'));
+		$asides = new WP_Query('post_type=asides&posts_per_page='.$number.'&orderby=date&order=DESC');
        		
 	   //The Loop
         if ($asides->have_posts())
