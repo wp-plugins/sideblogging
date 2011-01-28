@@ -4,7 +4,7 @@ Donate link: http://www.boverie.eu/
 Tags: asides,facebook,twitter
 Requires at least: 3.0
 Tested up to: 3.1
-Stable tag: 0.5.1
+Stable tag: 0.6
 
 Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
 
@@ -66,6 +66,13 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 
 == Changelog ==
 
+= 0.6 =
+* Rich Facebook post (Images thumbnail, Youtube embed, etc.)
+* Asides can be clickable
+* Images in widget are now optional (and customizable in the settings)
+* Custom permalinks prefix
+* Little bug fix in widget
+
 = 0.5.1 =
 * Fix a bug in Widget
 
@@ -104,6 +111,10 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 * First public version.
 
 == Upgrade Notice ==
+
+= 0.6 =
+Rich Facebook post (Images thumbnail, Youtube embed, etc).
+Custom permalinks prefix (I hope that will work everywhere...).
 
 = 0.5.1 =
 New Status.Net integration (identi.ca), customizable widget and Wordpress 3.1 compatibility.
