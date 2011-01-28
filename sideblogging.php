@@ -120,12 +120,12 @@ class Sideblogging {
 		$text .= '<a target="_blank" href="http://identi.ca/settings/oauthapps/new">'.__('Create a Identi.ca application',self::domain).'</a></p>';
 		
 		$text .= '<h5>'.__('About Facebook',self::domain).'</h5>';
-		$text .= '<p>'.__('For Facebook, you may need to modify the URL Connect',self::domain).'.<br />
+		$text .= '<p>'.__('For Facebook, you may need to modify the Site URL',self::domain).'.<br />
 				'.__('To do:',self::domain).'</p>
 				<ul>
 				<li>'.__('Go to application settings',self::domain).'.</li>
-				<li>'.__('Go to section <em>Connection</em>',self::domain).'.</li>
-				<li>'.sprintf(__('Put %s in the field URL Connect',self::domain),'<strong>'.get_bloginfo('url').'/</strong>').'.</li>
+				<li>'.__('Go to section <em>Web Site</em>',self::domain).'.</li>
+				<li>'.sprintf(__('Put %s in the field Site URL',self::domain),'<strong>'.get_bloginfo('url').'/</strong>').'.</li>
 				</ul>';
 				
 		$text .= '<h5>'.__('Debug',self::domain).'</h5>';
@@ -142,7 +142,6 @@ class Sideblogging {
 		echo '<form id="sideblogging_dashboard_form" action="" method="post" class="dashboard-widget-control-form">';
 		wp_nonce_field('sideblogging-quickpost');
 		echo '<div style="display:none;" id="sideblogging-status"></div>';
-		//echo '<p><label for="sideblogging-title">Statut</label><br />';
 		echo '<textarea name="sideblogging-title" id="sideblogging-title" style="width:100%"></textarea><br />';
 		echo '<span id="sideblogging-count">140</span> '.__('characters left',self::domain).'.<br />';
 		echo '<input type="checkbox" name="sideblogging-draft" id="sideblogging-draft" />
@@ -286,7 +285,7 @@ class Sideblogging {
 			}
 			
 			if(!$shortlink)
-				$shortlink = get_bloginfo('url').'/?p='.$post_ID;
+				$shortlink = home_url('?p='.$post_ID);
 
 			if(isset($options['twitter_token']) && !empty($options['twitter_token'])) // Twitter est configuré
 			{
@@ -319,13 +318,50 @@ class Sideblogging {
 				$body = $options['facebook_token']['access_token'].'&message='.$post->post_title;
 				
 				if(strlen($post->post_content) > 0)
-					$body .= '&link='.$permalink;
-
+				{
+					$body .= ' '.$shortlink;
+					$body .= '&link='.$shortlink;
+				}
+				
+				// Recherche des images dans le post
+				preg_match('/<img\W*src="([^"]*)".*>/U', $post->post_content, $matches);
+				if(isset($matches[1]))
+					$body .= '&picture='.$matches[1];
+					
+				// oEmbed sur les liens titre + post
+				if(preg_match_all("/https?:\/\/[a-zAZ0-9-_\/\?&=.\+#]+/i", $post->post_title.' '.$post->post_content, $matches))
+				{
+					foreach($matches[0] as $url) {
+						if($embed = $this->oembed_get($url))
+						{
+							//print_r($embed);
+							$body .= '&name='.$embed->title;
+							
+							if(isset($embed->thumbnail_url))
+								$body .= '&picture='.$embed->thumbnail_url;
+								
+							preg_match('/<embed\W*src="([^"]*)".*>/U', $embed->html, $matches);
+							if(isset($matches[1]))
+								$body .= '&source='.urlencode($matches[1]);
+							break;
+						}
+					}
+				}
 				$request = wp_remote_post('https://graph.facebook.com/me/feed', array('body' => $body, 'sslverify' => false));
-				//echo wp_remote_retrieve_body($request);
+				//wp_remote_retrieve_body($request);exit;
 			}
 		}
 		return $post_ID;
+	}
+	
+	function oembed_get($url) {
+		require_once ABSPATH.WPINC.'/class-oembed.php';
+		$oembed = new WP_oEmbed();
+		$oembed_provider = $oembed->discover($url);
+		if($oembed_provider)
+			return $oembed->fetch($oembed_provider, $url);
+			
+		return false;
 	}
 	
 	/* Page de configuration */
@@ -340,7 +376,6 @@ class Sideblogging {
 			echo '<pre>';
 			print_r($options);
 			echo '</pre>';
-
 			echo '<h3>Facebook</h3>';
 			if(isset($options['facebook_token']['access_token']))
 			{
@@ -472,17 +507,17 @@ class Sideblogging {
 			$options['facebook_token'] = '';
 			update_option('sideblogging',$options);
 		}
-		
+
 		$options = get_option('sideblogging');
 		require_once 'libs/shortlinks.class.php';
-		
+
 		echo '<form action="options.php" method="post">';
 		settings_fields('sideblogging_settings');
-		
+
 		echo '<h3>'.__('General Settings',self::domain).'</h3>';
 
 		echo '<table class="form-table">';
-		
+
 		echo '<tr valign="top">
 		<th scope="row">
 		<label for="sideblogging_comments">'.__('Allow comments',self::domain).'</label>
@@ -492,7 +527,7 @@ class Sideblogging {
 		echo '<option '.selected(1,$options['comments'],false).' value="1">ON</option>';
 		echo '</select>';
 		echo '</td></tr>';
-				
+
 		echo '<tr valign="top">
 		<th scope="row">
 		<label for="sideblogging_purge">'.__('Purge asides older than ',self::domain).'</label>
@@ -508,9 +543,18 @@ class Sideblogging {
 		echo '<option value="native">Native</option>';
 		foreach(Shortlinks::getSupportedServices() as $id => $name)
 		{
-			echo '<option '.selected($id,$options['shortener']).' value="'.$id.'">'.$name.'</option>';
+			echo '<option '.selected($id,$options['shortener'],false).' value="'.$id.'">'.$name.'</option>';
 		}
 		echo '</select>';
+		echo '</td></tr>';
+		
+		echo '<tr valign="top">
+		<th scope="row">
+		<label for="sideblogging_imagedir">'.__('Images directory',self::domain).'</label>
+		</th><td>';
+		echo '<input type="text" size="70" value="'.$options['imagedir'].'" name="sideblogging[imagedir]" id="sideblogging_imagedir" />';
+		echo ' <a href="#" onclick="document.getElementById(\'sideblogging_imagedir\').value = \''.SIDEBLOGGING_URL.'/images/\';return false;">default</a>';
+		echo ' <a href="#" onclick="document.getElementById(\'sideblogging_imagedir\').value = \''.get_bloginfo('stylesheet_directory').'\';return false;">theme</a>';
 		echo '</td></tr>';
 		
 		if(in_array($options['shortener'],array('bitly','jmp')))
@@ -686,6 +730,13 @@ class Sideblogging {
 		$options['shortener'] = esc_attr($options['shortener']);
 		$options['shortener_login'] = (isset($options['shortener_login'])) ? esc_attr($options['shortener_login']) : $options_old['shortener_login'];
 		$options['shortener_password'] = (isset($options['shortener_password'])) ? esc_attr($options['shortener_password']) : $options_old['shortener_password'];
+		
+		// Directory must always end with a /
+		if(isset($options['imagedir']) && strlen($options['imagedir']) > 0)
+		{
+			if(substr($options['imagedir'], -1) != '/' && substr($options['imagedir'], -1) != '\\')
+				$options['imagedir'] .= '/';
+		}
 
 		$options['purge'] = (is_numeric($options['purge'])) ? intval($options['purge']) : 0;
 		
