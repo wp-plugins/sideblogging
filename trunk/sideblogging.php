@@ -335,14 +335,20 @@ class Sideblogging {
 						if($embed = $this->oembed_get($url))
 						{
 							//print_r($embed);
-							$body .= '&name='.$embed->title;
+							if(isset($embed->title))
+								$body .= '&name='.$embed->title;
 							
 							if(isset($embed->thumbnail_url))
 								$body .= '&picture='.$embed->thumbnail_url;
-								
-							preg_match('/<embed\W*src="([^"]*)".*>/U', $embed->html, $matches);
-							if(isset($matches[1]))
-								$body .= '&source='.urlencode($matches[1]);
+							else if(isset($embed->url))
+								$body .= '&picture='.$embed->url;
+							
+							if(isset($embed->html))
+							{
+								preg_match('/<embed\W*src="([^"]*)".*>/U', $embed->html, $matches);
+								if(isset($matches[1]))
+									$body .= '&source='.urlencode($matches[1]);
+							}
 							break;
 						}
 					}
