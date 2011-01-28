@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: SideBlogging 0.5\n"
+"Project-Id-Version: SideBlogging 0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-11 01:41+0100\n"
-"PO-Revision-Date: 2010-09-11 01:41+0100\n"
+"POT-Creation-Date: 2011-01-28 18:45+0100\n"
+"PO-Revision-Date: 2011-01-28 18:48+0100\n"
 "Last-Translator: Cédric Boverie <ced@boverie.eu>\n"
 "Language-Team: Cédric Boverie <ced@boverie.eu>\n"
 "MIME-Version: 1.0\n"
@@ -24,310 +24,315 @@ msgid "Display asides in a widget. They can automatically be published to Twitte
 msgstr "Afficher des brèves dans un widget. Elles peuvent automatiquement être publiées sur Twitter, Facebook, et n'importe quelle installation Status.net (comme identi.ca)."
 
 # @ sideblogging
-#: sideblogging.php:115
+#: sideblogging.php:117
 msgid "Sideblogging help"
 msgstr "Aide de Sideblogging"
 
 # @ sideblogging
-#: sideblogging.php:116
+#: sideblogging.php:118
 msgid "Create a Twitter application"
 msgstr "Créer une application Twitter"
 
 # @ sideblogging
-#: sideblogging.php:116
-#: sideblogging.php:117
+#: sideblogging.php:118
+#: sideblogging.php:119
 msgid "video tutorial"
 msgstr "tutoriel vidéo"
 
 # @ sideblogging
-#: sideblogging.php:117
+#: sideblogging.php:119
 msgid "Create a Facebook application"
 msgstr "Créer une application Facebook"
 
 # @ sideblogging
-#: sideblogging.php:118
+#: sideblogging.php:120
 msgid "Create a Identi.ca application"
 msgstr "Créer une application Identi.ca"
 
 # @ sideblogging
-#: sideblogging.php:120
+#: sideblogging.php:122
 msgid "About Facebook"
 msgstr "À propos de Facebook"
 
 # @ sideblogging
-#: sideblogging.php:121
-msgid "For Facebook, you may need to modify the URL Connect"
-msgstr "Pour Facebook, il peut être nécessaire de mofier le paramètre URL Connect"
+#: sideblogging.php:123
+msgid "For Facebook, you may need to modify the Site URL"
+msgstr "Pour Facebook, il peut être nécessaire de mofier le paramètre URL du Site"
 
 # @ sideblogging
-#: sideblogging.php:122
+#: sideblogging.php:124
 msgid "To do:"
 msgstr "Pour se faire :"
 
 # @ sideblogging
-#: sideblogging.php:124
+#: sideblogging.php:126
 msgid "Go to application settings"
 msgstr "Modifier les paramètres de l'application"
 
 # @ sideblogging
-#: sideblogging.php:125
-msgid "Go to section <em>Connection</em>"
-msgstr "Allez dans la rubrique <em>Connexion</em>"
+#: sideblogging.php:127
+msgid "Go to section <em>Web Site</em>"
+msgstr "Allez dans la rubrique <em>Site web</em>"
 
 # @ sideblogging
-#: sideblogging.php:126
+#: sideblogging.php:128
 #, php-format
-msgid "Put %s in the field URL Connect"
-msgstr "Metttez %s dans le champ URL Connect"
+msgid "Put %s in the field Site URL"
+msgstr "Metttez %s dans le champ URL du Site"
 
 # @ sideblogging
-#: sideblogging.php:129
+#: sideblogging.php:131
 msgid "Debug"
 msgstr "Débogage"
 
 # @ sideblogging
-#: sideblogging.php:130
+#: sideblogging.php:132
 msgid "Debug information"
 msgstr "Information de débogage"
 
 # @ sideblogging
-#: sideblogging.php:136
-#: sideblogging.php:702
-#: sideblogging_Widget.php:58
+#: sideblogging.php:138
+#: sideblogging.php:760
+#: sideblogging_Widget.php:69
 msgid "Asides"
 msgstr "Brèves"
 
 # @ sideblogging
-#: sideblogging.php:145
+#: sideblogging.php:146
 msgid "characters left"
 msgstr "caractères restants"
 
 # @ sideblogging
-#: sideblogging.php:147
+#: sideblogging.php:148
 msgid "Add additional content"
 msgstr "Ajouter du contenu additionnel"
 
 # @ sideblogging
-#: sideblogging.php:171
+#: sideblogging.php:172
 msgid "Aside published"
 msgstr "Brève publiée"
 
 # @ sideblogging
-#: sideblogging.php:181
+#: sideblogging.php:182
 msgid "An error occurred"
 msgstr "Une erreur est survenue"
 
 # @ sideblogging
-#: sideblogging.php:239
+#: sideblogging.php:240
 msgid "Twitter is currently unavailable. Please check your keys or try again later."
 msgstr "Twitter est indisponible pour le moment. Veuillez vérifier vos clés ou ré-essayer plus tard."
 
 # @ sideblogging
-#: sideblogging.php:263
+#: sideblogging.php:264
 msgid "The StatusNet installation is currently unavailable. Please check your keys or try again later."
 msgstr "L'installation StatusNet est indisponible pour le moment. Veuillez vérifier vos clés ou ré-essayer plus tard."
 
 # @ default
-#: sideblogging.php:337
+#: sideblogging.php:375
 msgid "Settings"
 msgstr "Options"
 
 # @ sideblogging
-#: sideblogging.php:352
+#: sideblogging.php:389
 msgid "No Facebook account registered"
 msgstr "Aucun compte Facebook enregistré"
 
 # @ sideblogging
-#: sideblogging.php:368
+#: sideblogging.php:405
 msgid "No Twitter account registered"
 msgstr "Aucun compte Twitter enregistré"
 
 # @ sideblogging
-#: sideblogging.php:382
+#: sideblogging.php:419
 msgid "No StatusNet account registered"
 msgstr "Aucun compte StatusNet enregistré"
 
 # @ sideblogging
-#: sideblogging.php:404
+#: sideblogging.php:441
 msgid "Twitter account registered"
 msgstr "Compte Twitter enregistré"
 
 # @ sideblogging
-#: sideblogging.php:407
+#: sideblogging.php:444
 msgid "Error during the connection with Twitter"
 msgstr "Une erreur est survenue pendant la connexion avec Twitter"
 
 # @ sideblogging
-#: sideblogging.php:424
+#: sideblogging.php:466
 msgid "StatusNet account registered"
 msgstr "Compte StatusNet enregistré"
 
 # @ sideblogging
-#: sideblogging.php:427
+#: sideblogging.php:469
 msgid "Error during the connection with StatusNet installation"
 msgstr "Une erreur est survenue pendant la connexion avec l'installation StatusNet"
 
 # @ sideblogging
-#: sideblogging.php:445
+#: sideblogging.php:487
 msgid "Facebook account registered"
 msgstr "Compte Facebook enregistré"
 
 # @ sideblogging
-#: sideblogging.php:448
+#: sideblogging.php:490
 msgid "Error during the connection with Facebook"
 msgstr "Une erreur est survenue pendant la connexion avec Facebook"
 
 # @ sideblogging
-#: sideblogging.php:475
+#: sideblogging.php:517
 msgid "General Settings"
 msgstr "Paramètres généraux"
 
 # @ sideblogging
-#: sideblogging.php:481
+#: sideblogging.php:523
 msgid "Allow comments"
 msgstr "Autoriser les commentaires"
 
 # @ sideblogging
-#: sideblogging.php:491
+#: sideblogging.php:533
 msgid "Purge asides older than "
 msgstr "Purger les brèves de plus de"
 
 # @ sideblogging
-#: sideblogging.php:494
+#: sideblogging.php:536
 msgid "days"
 msgstr "jours"
 
 # @ sideblogging
-#: sideblogging.php:494
+#: sideblogging.php:536
 msgid "0 for keeping asides forever"
 msgstr "0 pour conserver les brèves indéfiniment"
 
 # @ sideblogging
-#: sideblogging.php:498
+#: sideblogging.php:540
 msgid "Url shortener"
 msgstr "Raccourcisseur d'url"
 
+#: sideblogging.php:553
+msgid "Images directory"
+msgstr "Dossier des images"
+
 # @ sideblogging
-#: sideblogging.php:523
+#: sideblogging.php:574
 msgid "Find your key"
 msgstr "Trouver votre clé"
 
 # @ sideblogging
-#: sideblogging.php:527
+#: sideblogging.php:578
 msgid "Applications Settings"
 msgstr "Paramètres des applications"
 
 # @ sideblogging
-#: sideblogging.php:579
+#: sideblogging.php:630
 msgid "Don't forget to look at the contextual help (in the top right of page) for more informations about keys."
 msgstr "N'oubliez pas de consulter l'aide contextuelle (en haut à droite de la page) pour plus d'informations sur ces clés."
 
 # @ default
-#: sideblogging.php:580
+#: sideblogging.php:631
 msgid "Save Changes"
 msgstr "Enregistrer les modifications"
 
 # @ sideblogging
-#: sideblogging.php:586
+#: sideblogging.php:637
 msgid "Republish on Twitter"
 msgstr "Republier sur Twitter"
 
 # @ sideblogging
-#: sideblogging.php:590
+#: sideblogging.php:641
 msgid "You must configure Twitter app to be able to sign-in"
 msgstr "Vous devez configurer l'application Twitter pour pouvoir vous connecter"
 
 # @ sideblogging
-#: sideblogging.php:594
+#: sideblogging.php:645
 msgid "To automatically publish your asides on Twitter, sign-in below:"
 msgstr "Pour publier automatiquement vos brèves sur Twitter, connectez-vous ci-desous :"
 
 # @ sideblogging
-#: sideblogging.php:601
+#: sideblogging.php:652
 #, php-format
 msgid "You are connected to Twitter as %s"
 msgstr "Vous êtes connectés à Twitter en tant que %s"
 
 # @ sideblogging
-#: sideblogging.php:602
-#: sideblogging.php:626
-#: sideblogging.php:645
+#: sideblogging.php:653
+#: sideblogging.php:677
+#: sideblogging.php:696
 msgid "Change account or disable"
 msgstr "Changer de compte ou désactiver"
 
 # @ sideblogging
-#: sideblogging.php:606
+#: sideblogging.php:657
 msgid "Republish on Facebook"
 msgstr "Republier sur Facebook"
 
 # @ sideblogging
-#: sideblogging.php:610
+#: sideblogging.php:661
 msgid "Sorry, you need OpenSLL to connect with Facebook"
 msgstr "Désolé. OpenSSL est nécessaire pour la connexion à Facebook"
 
 # @ sideblogging
-#: sideblogging.php:614
+#: sideblogging.php:665
 msgid "You must configure Facebook app to be able to sign-in"
 msgstr "Vous devez configurer l'application Facebook pour pouvoir vous connecter"
 
 # @ sideblogging
-#: sideblogging.php:618
+#: sideblogging.php:669
 msgid "To automatically publish your asides on Facebook, sign-in below:"
 msgstr "Pour publier automatiquement vos brèves sur Facebook, connectez-vous ci-desous :"
 
 # @ sideblogging
-#: sideblogging.php:625
+#: sideblogging.php:676
 #, php-format
 msgid "You are connected to Facebook as %s"
 msgstr "Vous êtes connectés à Facebook en tant que %s"
 
 # @ sideblogging
-#: sideblogging.php:630
+#: sideblogging.php:681
 msgid "Republish on a Identi.ca (or other StatusNet installation)"
 msgstr "Republier sur Identi.ca (ou une autre installation StatusNet)"
 
 # @ sideblogging
-#: sideblogging.php:633
+#: sideblogging.php:684
 msgid "You must configure StatusNet app to be able to sign-in"
 msgstr "Vous devez configurer l'application StatusNet pour pouvoir vous connecter"
 
 # @ sideblogging
-#: sideblogging.php:637
+#: sideblogging.php:688
 msgid "To automatically publish your asides on StatusNet, sign-in below:"
 msgstr "Pour publier automatiquement vos brèves sur StatusNet, connectez-vous ci-desous :"
 
 # @ sideblogging
-#: sideblogging.php:644
-msgid "You are connected to StatusNet"
-msgstr "Vous êtes connectés à StatusNet"
+#: sideblogging.php:695
+#, php-format
+msgid "You are connected to StatusNet as %s"
+msgstr "Vous êtes connectés à StatusNet en tant que %s"
 
 # @ sideblogging
-#: sideblogging.php:703
+#: sideblogging.php:761
 msgid "Aside"
 msgstr "Brève"
 
 # @ sideblogging
-#: sideblogging.php:710
+#: sideblogging.php:768
 msgid "Add new aside"
 msgstr "Ajouter une nouvelle brève"
 
 # @ sideblogging
-#: sideblogging.php:711
+#: sideblogging.php:769
 msgid "Edit aside"
 msgstr "Modifier la brève"
 
 # @ sideblogging
-#: sideblogging.php:712
+#: sideblogging.php:770
 msgid "No aside found"
 msgstr "Aucune brève trouvée"
 
 # @ sideblogging
-#: sideblogging.php:713
+#: sideblogging.php:771
 msgid "No aside found in trash"
 msgstr "Aucune brève trouvée dans la corbeille"
 
 # @ sideblogging
-#: sideblogging.php:714
+#: sideblogging.php:772
 msgid "Search asides"
 msgstr "Chercher dans les brèves"
 
@@ -337,25 +342,33 @@ msgid "Display asides in a widget"
 msgstr "Affiche les brèves dans un widget"
 
 # @ default
-#: sideblogging_Widget.php:22
+#: sideblogging_Widget.php:24
 msgid "Title:"
 msgstr "Titre :"
 
 # @ sideblogging
-#: sideblogging_Widget.php:26
+#: sideblogging_Widget.php:28
 msgid "Number of asides to display:"
 msgstr "Nombre de brèves à afficher :"
 
-#: sideblogging_Widget.php:34
-msgid "Display a link to a RSS feed"
+#: sideblogging_Widget.php:37
+msgid "Link on an image after the title"
+msgstr "Lien sur une image après le titre"
+
+#: sideblogging_Widget.php:40
+msgid "Asides are clickable (if content is not empty)"
+msgstr "Les brèves sont cliquables (si le contenu n'est pas vide)"
+
+#: sideblogging_Widget.php:43
+msgid "Show a link to a RSS feed"
 msgstr "Afficher un lien vers un flux RSS"
 
 # @ sideblogging
-#: sideblogging_Widget.php:37
-msgid "Display a link to an archive page"
+#: sideblogging_Widget.php:46
+msgid "Show a link to an archive page"
 msgstr "Affiche un lien vers une page d'archive"
 
-#: sideblogging_Widget.php:138
+#: sideblogging_Widget.php:164
 msgid "More"
 msgstr "Plus"
 

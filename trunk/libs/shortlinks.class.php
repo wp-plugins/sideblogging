@@ -27,7 +27,7 @@ class Shortlinks {
 		return array(
 			'isgd' => 'is.gd',
 			'bitly' => 'bit.ly',
-			'jmp' => 'jm.p',
+			'jmp' => 'j.mp',
 			'googl' => 'goo.gl',
 			'tinyurl' => 'tinyurl.com',
 			'supr' => 'su.pr',
