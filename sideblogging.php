@@ -3,7 +3,7 @@
  * Plugin Name: SideBlogging
  * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
  * Description: Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
- * Version: 0.5.9
+ * Version: 0.6
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
  * Text Domain: sideblogging
@@ -19,12 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * Along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-/*
-TODO:
-- Refactor (especially Twitter/StatusNet integration)
-- Make widget more customizable
 */
 
 // Installation
@@ -563,6 +557,14 @@ class Sideblogging {
 		echo ' <a href="#" onclick="document.getElementById(\'sideblogging_imagedir\').value = \''.get_bloginfo('stylesheet_directory').'\';return false;">theme</a>';
 		echo '</td></tr>';
 		
+		echo '<tr valign="top">
+		<th scope="row">
+		<label for="sideblogging_slug">'.__('Permalinks prefix',self::domain).'</label>
+		</th><td>';
+		echo '<input type="text" size="20" value="'.(isset($options['slug']) ? $options['slug'] : 'asides').'" name="sideblogging[slug]" id="sideblogging_slug" />';
+		echo ' <a href="#" onclick="document.getElementById(\'sideblogging_slug\').value = \'asides\';return false;">asides</a>';
+		echo '</td></tr>';
+		
 		if(in_array($options['shortener'],array('bitly','jmp')))
 		{
 			echo '<tr valign="top">
@@ -733,6 +735,7 @@ class Sideblogging {
 		$options['statusnet_consumer_key'] = esc_attr($options['statusnet_consumer_key']);
 		$options['statusnet_consumer_secret'] = esc_attr($options['statusnet_consumer_secret']);
 		
+		$options['slug'] = esc_attr($options['slug']);
 		$options['shortener'] = esc_attr($options['shortener']);
 		$options['shortener_login'] = (isset($options['shortener_login'])) ? esc_attr($options['shortener_login']) : $options_old['shortener_login'];
 		$options['shortener_password'] = (isset($options['shortener_password'])) ? esc_attr($options['shortener_password']) : $options_old['shortener_password'];
@@ -756,12 +759,19 @@ class Sideblogging {
 	function post_type_asides() {
 		
 		$options = get_option('sideblogging');
+
 		$supports = array('title','editor');
 		
 		if(isset($options['comments']) && $options['comments'] == 1)
 			$supports[] = 'comments';
+			
+		if(isset($options['slug']) && !empty($options['slug']))
+			$rewrite = array('slug' => $options['slug']);
+		else
+			$rewrite = array('slug' => 'asides');
+		
 
-		register_post_type( 'asides',
+		register_post_type('asides',
 			array(
 				'label' => __('Asides',self::domain),
 				'singular_label' => __('Aside',self::domain),
@@ -778,16 +788,22 @@ class Sideblogging {
 					'search_items' => __('Search asides',self::domain),
 				),
 				'supports' => $supports,
-				//'rewrite' => array('slug' => 'asides'),
+				'rewrite' => $rewrite,
 			)
 		);
 	}
 	
 	function custom_rewrite_rules($wp_rewrite) {
+		$options = get_option('sideblogging');
+		if(isset($options['slug']) && !empty($options['slug']))
+			$slug = $options['slug'];
+		else
+			$slug = 'asides';
+			
 		$new_rules = array();
-		$new_rules['asides/page/?([0-9]{1,})/?$'] = 'index.php?post_type=asides&paged=' . $wp_rewrite->preg_index(1);
-		$new_rules['asides/(feed|rdf|rss|rss2|atom)/?$'] = 'index.php?post_type=asides&feed=' . $wp_rewrite->preg_index(1);
-		$new_rules['asides/?$'] = 'index.php?post_type=asides';
+		$new_rules[$slug.'/page/?([0-9]{1,})/?$'] = 'index.php?post_type=asides&paged=' . $wp_rewrite->preg_index(1);
+		$new_rules[$slug.'/(feed|rdf|rss|rss2|atom)/?$'] = 'index.php?post_type=asides&feed=' . $wp_rewrite->preg_index(1);
+		$new_rules[$slug.'/?$'] = 'index.php?post_type=asides';
 
 		$wp_rewrite->rules = array_merge($new_rules, $wp_rewrite->rules);
 				

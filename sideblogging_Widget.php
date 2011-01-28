@@ -113,12 +113,12 @@ class SideBlogging_Widget extends WP_Widget {
 
                 echo '<li>';
 				
-				if($linktitle)
+				if($linktitle && strlen($content) > 0)
 					echo '<a href="'.get_permalink().'">'.$title.'</a>';
 				else
 				{
 					// Si le titre n'est pas un lien, on effectue quelques remplacements à l'intérieur
-					$title = preg_replace('#https?://([a-zA-Z0-9-_./\?=&#]+)#i', '<a href="$0">$0</a>', $title);
+					$title = preg_replace('#https?://([a-zA-Z0-9-_./\?=&]+)#i', '<a href="$0">$0</a>', $title);
 					$title = preg_replace('#@([a-zA-Z0-9-_]+)#i', '<a href="http://twitter.com/$1">$0</a>', $title);
 					echo $title;
 				}
@@ -156,9 +156,17 @@ class SideBlogging_Widget extends WP_Widget {
 			
 			if($displayarchive) 
 			{
+				if(!isset($options))
+					$options = get_option('sideblogging');
+				
+				if(isset($options['slug']) && !empty($options['slug']))
+					$slug = $options['slug'];
+				else
+					$slug = 'asides';
+						
 				echo '<p class="sideblogging_more"><a href="';
 				if (get_option('permalink_structure') != '')
-					echo get_bloginfo('url').'/asides/';
+					echo get_bloginfo('url').'/'.$slug.'/';
 				else
 					echo get_bloginfo('url').'?post_type=asides';
 				echo '">'.__('More',Sideblogging::domain).' &raquo;</a></p>';
