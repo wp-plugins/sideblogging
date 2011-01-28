@@ -115,6 +115,7 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 = 0.6 =
 Rich Facebook post (Images thumbnail, Youtube embed, etc).
 Custom permalinks prefix (I hope that will work everywhere...).
+A lot of new settings are not yet documented...sorry.
 
 = 0.5.1 =
 New Status.Net integration (identi.ca), customizable widget and Wordpress 3.1 compatibility.
