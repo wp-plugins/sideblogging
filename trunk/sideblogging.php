@@ -3,7 +3,7 @@
  * Plugin Name: SideBlogging
  * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
  * Description: Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
- * Version: 0.6
+ * Version: 0.7
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
  * Text Domain: sideblogging
@@ -48,7 +48,7 @@ class Sideblogging {
 		
 		// Définir l'action que exécute la tâche planifiée
 		add_action('sideblogging_cron', array(&$this,'cron'));
-
+		
 		if(is_admin())
 		{
 			// Register option settings
@@ -65,8 +65,11 @@ class Sideblogging {
 			add_action('admin_head-index.php', array(&$this,'dashboard_admin_js'));
 			add_action('wp_ajax_sideblogging_widget_post', array(&$this,'ajax_action'));
 			
-			// Regenerate permalink (on every admin page, need to find better)
-			add_action('admin_init', array(&$this,'regenerate_rewrite_rules'));
+			if(isset($_GET['page']) && $_GET['page'] == 'sideblogging')
+			{
+				// Regenerate permalink
+				add_action('admin_init', array(&$this,'regenerate_rewrite_rules'));
+			}
 		}
 	}
 	
@@ -177,7 +180,7 @@ class Sideblogging {
 						.addClass('error').removeClass('updated')
 						.show(200);
 					}
-					$('#sideblogging-submit').attr('disabled','');
+					$('#sideblogging-submit').removeAttr('disabled');
 				});
 				return false;
 			});
@@ -188,7 +191,6 @@ class Sideblogging {
 				var restant = 140 - count;
 				$('#sideblogging-count').html(restant);
 			});
-			
 		});
 		</script>
 		<?php
@@ -318,12 +320,13 @@ class Sideblogging {
 				}
 				
 				// Recherche des images dans le post
-				preg_match('/<img\W*src="([^"]*)".*>/U', $post->post_content, $matches);
-				if(isset($matches[1]))
-					$body .= '&picture='.$matches[1];
+				// OLD : preg_match('/<img\W*src="([^"]*)".*>/U', $post->post_content, $matches);
+				preg_match('#<\s*img [^\>]*src\s*=\s*(["\'])(.*?)\1#im', $post->post_content, $matches);
+				if(isset($matches[2]))
+					$body .= '&picture='.$matches[2];
 					
 				// oEmbed sur les liens titre + post
-				if(preg_match_all("/https?:\/\/[a-zAZ0-9-_\/\?&=.\+#]+/i", $post->post_title.' '.$post->post_content, $matches))
+				if(!isset($matches[2]) && preg_match_all("/https?:\/\/[a-zAZ0-9-_\/\?&=.\+#]+/i", $post->post_title.' '.$post->post_content, $matches))
 				{
 					foreach($matches[0] as $url) {
 						if($embed = $this->oembed_get($url))
@@ -348,7 +351,7 @@ class Sideblogging {
 					}
 				}
 				$request = wp_remote_post('https://graph.facebook.com/me/feed', array('body' => $body, 'sslverify' => false));
-				//wp_remote_retrieve_body($request);exit;
+				//echo $body;print_r(wp_remote_retrieve_body($request));exit;
 			}
 		}
 		return $post_ID;
@@ -735,7 +738,7 @@ class Sideblogging {
 		$options['statusnet_consumer_key'] = esc_attr($options['statusnet_consumer_key']);
 		$options['statusnet_consumer_secret'] = esc_attr($options['statusnet_consumer_secret']);
 		
-		$options['slug'] = esc_attr($options['slug']);
+		$options['slug'] = (!empty($options['slug'])) ? esc_attr($options['slug']) : 'asides';
 		$options['shortener'] = esc_attr($options['shortener']);
 		$options['shortener_login'] = (isset($options['shortener_login'])) ? esc_attr($options['shortener_login']) : $options_old['shortener_login'];
 		$options['shortener_password'] = (isset($options['shortener_password'])) ? esc_attr($options['shortener_password']) : $options_old['shortener_password'];

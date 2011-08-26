@@ -2,7 +2,9 @@
 // Sidebar widget
 class SideBlogging_Widget extends WP_Widget {
 
-    function SideBlogging_Widget() {
+	private $options;
+
+    public function SideBlogging_Widget() {
         $widget_ops = array(
             'classname' => 'widget_sideblogging',
             'description' => __('Display asides in a widget',Sideblogging::domain)
@@ -10,7 +12,7 @@ class SideBlogging_Widget extends WP_Widget {
         $this->WP_Widget(false, 'SideBlogging',$widget_ops);
     }
 
-    function form($instance) {
+    public function form($instance) {
         $title = isset($instance['title']) ? esc_attr($instance['title']) : '';
         $number = isset($instance['number']) ? intval($instance['number']) : '';
         if($number <= 0) $number = 5;
@@ -48,7 +50,7 @@ class SideBlogging_Widget extends WP_Widget {
     }
     
     /** @see WP_Widget::update */
-    function update($new_instance, $old_instance) {
+    public function update($new_instance, $old_instance) {
         $instance = $old_instance;
         $instance['title'] = strip_tags($new_instance['title']);
         $instance['number'] = intval($new_instance['number']);
@@ -58,8 +60,23 @@ class SideBlogging_Widget extends WP_Widget {
         $instance['displayarchive'] = isset($new_instance['displayarchive']) ? true : false;
         return $instance;
     }
+	
+	public function getOptions() {
+		if(empty($this->options))
+			$this->options = get_option('sideblogging');
+		
+		return $this->options;
+	}
+	
+	public function getSlug() {
+		$options = $this->getOptions();
+		if(isset($options['slug']) && !empty($options['slug']))
+			return $options['slug'];
+		else
+			return 'asides';
+	}
 
-    function widget($args, $instance) {
+    public function widget($args, $instance) {
         // outputs the content of the widget
         extract($args);
         $title = apply_filters('widget_title', $instance['title']);
@@ -83,7 +100,7 @@ class SideBlogging_Widget extends WP_Widget {
 		{
 			echo ' <a href="';
 			if (get_option('permalink_structure') != '')
-				echo get_bloginfo('url').'/asides/feed/';
+				echo get_bloginfo('url').'/'.$this->getSlug().'/feed/';
 			else
 				echo get_bloginfo('rss2_url').'&amp;post_type=asides';
 			echo '"><img src="'.SIDEBLOGGING_URL.'/images/rss.png" alt="RSS" title="RSS" /></a>';
@@ -128,45 +145,33 @@ class SideBlogging_Widget extends WP_Widget {
                     if(preg_match('#youtube.com|dailymotion.com|wat.tv|.flv|&lt;video|<video#',$content)) {
                         $image = 'video.gif';
                         $alt = '*';
-                    }
-                    else if(preg_match('#.mp3|.ogg|&lt;audio|<audio#',$content)) {
+                    } else if(preg_match('#.mp3|.ogg|&lt;audio|<audio#',$content)) {
                         $image = 'music.gif';
                         $alt = '*';
-                    }
-                    else if(preg_match('#&lt;embed|&lt;object|<embed|<object#',$content)) {
+                    } else if(preg_match('#&lt;embed|&lt;object|<embed|<object#',$content)) {
                         $image = 'video.gif';
                         $alt = '*';
-                    }
-                    else if(preg_match('#&lt;img|<img#',$content)) {
+                    } else if(preg_match('#&lt;img|<img#',$content)) {
                         $image = 'image.gif';
                         $alt = '*';
-                    }
-                    else {
+                    } else {
                         $image = 'other.gif';
                         $alt = '*';
                     }
+					
                     echo ' <a href="'.get_permalink().'">
                     <img src="'.$imagedir.$image.'" alt="'.$alt.'" title="'.$alt.'" />
                     </a>';
                 }
-				
                 echo '</li>';
             }
             echo '</ul>';
 			
 			if($displayarchive) 
-			{
-				if(!isset($options))
-					$options = get_option('sideblogging');
-				
-				if(isset($options['slug']) && !empty($options['slug']))
-					$slug = $options['slug'];
-				else
-					$slug = 'asides';
-						
+			{				
 				echo '<p class="sideblogging_more"><a href="';
 				if (get_option('permalink_structure') != '')
-					echo get_bloginfo('url').'/'.$slug.'/';
+					echo get_bloginfo('url').'/'.$this->getSlug().'/';
 				else
 					echo get_bloginfo('url').'?post_type=asides';
 				echo '">'.__('More',Sideblogging::domain).' &raquo;</a></p>';
