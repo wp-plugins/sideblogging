@@ -3,11 +3,10 @@ Contributors: cedbv
 Donate link: http://www.boverie.eu/
 Tags: asides,facebook,twitter
 Requires at least: 3.0
-Tested up to: 3.1
-Stable tag: 0.5.1
+Tested up to: 3.2.1
+Stable tag: 0.7
 
 Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
-Require Wordpress 3 and PHP 5.
 
 == Description ==
 
@@ -67,8 +66,23 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 
 == Changelog ==
 
+= 0.7 =
+* Compatibility with Wordpress 3.2
+* Dashboard Widget : Compatibility with jQuery 1.6
+* Better media detection for rich Facebook post
+* No more refreshing rewrite rules on every administration page
+* Widget : A little cleaning + Fix broken rss link with custom slug
+* Update OAuth library
+
+= 0.6 =
+* Rich Facebook post (Images thumbnail, Youtube embed, etc.)
+* Asides can be clickable
+* Images in widget are now optional (and customizable in the settings)
+* Custom permalinks prefix
+* Little bug fix in widget
+
 = 0.5.1 =
-Fix a bug in Widget
+* Fix a bug in Widget
 
 = 0.5 =
 * StatusNet integration (include identi.ca)
@@ -81,7 +95,7 @@ Fix a bug in Widget
 
 = 0.3.1 =
 * Fix a regression in public widget
-* New shortlinks providers : jm.p
+* New shortlinks providers : j.mp
 
 = 0.3 =
 * Converts text links into clickable links.
@@ -105,6 +119,14 @@ Fix a bug in Widget
 * First public version.
 
 == Upgrade Notice ==
+
+= 0.7 =
+Compatibility fixes for recent changes in Wordpress and jQuery, much better performance in administration pages and a few bug fixes.
+
+= 0.6 =
+Rich Facebook post (Images thumbnail, Youtube embed, etc).
+Custom permalinks prefix (I hope that will work everywhere...).
+A lot of new settings are not yet documented...sorry.
 
 = 0.5.1 =
 New Status.Net integration (identi.ca), customizable widget and Wordpress 3.1 compatibility.
