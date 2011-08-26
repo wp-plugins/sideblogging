@@ -4,7 +4,7 @@ Donate link: http://www.boverie.eu/
 Tags: asides,facebook,twitter
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.7
+Stable tag: 0.7.1
 
 Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
 
