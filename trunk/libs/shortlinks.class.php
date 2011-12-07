@@ -108,18 +108,6 @@ class Shortlinks {
 	private function jmp($url) {
 		return $this->bitly($url,'j.mp');
 	}
-	/*
-	private function googl($url) {
-		$result = $this->http->request('http://ggl-shortener.appspot.com/?url='.$url);
-		if(!is_wp_error($result) && $result['response']['code'] == 200)
-		{
-			$content = json_decode($result['body'],true);
-			return $content['short_url'];
-		}
-		else
-			return false;		
-	}
-	*/
 
 	private function googl($url) {
 	

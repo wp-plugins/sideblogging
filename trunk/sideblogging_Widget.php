@@ -177,6 +177,8 @@ class SideBlogging_Widget extends WP_Widget {
 				echo '">'.__('More',Sideblogging::domain).' &raquo;</a></p>';
 			}
         }
+		
+		
         echo $after_widget;
     }
 }

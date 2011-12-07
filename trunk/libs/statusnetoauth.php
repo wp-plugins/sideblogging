@@ -34,7 +34,7 @@ class SidebloggingStatusNetOAuth {
   /* Contains the last HTTP headers returned. */
   public $http_info;
   /* Set the useragnet. */
-  public $useragent = 'Sideblogging/0.5';
+  public $useragent = 'Sideblogging/0.8';
 
   /**
    * Set API URLS
