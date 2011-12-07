@@ -1,0 +1,326 @@
+# Copyright (C) 2010 SideBlogging
+# This file is distributed under the same license as the SideBlogging package.
+msgid ""
+msgstr ""
+"Project-Id-Version: SideBlogging 0.7\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/sideblogging\n"
+"POT-Creation-Date: 2011-08-26 17:53:46+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#. #-#-#-#-#  plugin.pot (SideBlogging 0.7)  #-#-#-#-#
+#. Description of the plugin/theme
+#: l10n.php:3
+msgid ""
+"Display asides in a widget. They can automatically be published to Twitter, "
+"Facebook, and any Status.net installation (like identi.ca)."
+msgstr ""
+
+#: sideblogging.php:114
+msgid "Sideblogging help"
+msgstr ""
+
+#: sideblogging.php:115
+msgid "Create a Twitter application"
+msgstr ""
+
+#: sideblogging.php:115 sideblogging.php:116
+msgid "video tutorial"
+msgstr ""
+
+#: sideblogging.php:116
+msgid "Create a Facebook application"
+msgstr ""
+
+#: sideblogging.php:117
+msgid "Create a Identi.ca application"
+msgstr ""
+
+#: sideblogging.php:119
+msgid "About Facebook"
+msgstr ""
+
+#: sideblogging.php:120
+msgid "For Facebook, you may need to modify the Site URL"
+msgstr ""
+
+#: sideblogging.php:121
+msgid "To do:"
+msgstr ""
+
+#: sideblogging.php:123
+msgid "Go to application settings"
+msgstr ""
+
+#: sideblogging.php:124
+msgid "Go to section <em>Web Site</em>"
+msgstr ""
+
+#: sideblogging.php:125
+msgid "Put %s in the field Site URL"
+msgstr ""
+
+#: sideblogging.php:128
+msgid "Debug"
+msgstr ""
+
+#: sideblogging.php:129
+msgid "Debug information"
+msgstr ""
+
+#: sideblogging.php:135 sideblogging.php:779 sideblogging_Widget.php:86
+msgid "Asides"
+msgstr ""
+
+#: sideblogging.php:143
+msgid "characters left"
+msgstr ""
+
+#: sideblogging.php:145
+msgid "Add additional content"
+msgstr ""
+
+#: sideblogging.php:147
+msgid "Publish"
+msgstr ""
+
+#: sideblogging.php:169
+msgid "Aside published"
+msgstr ""
+
+#: sideblogging.php:179
+msgid "An error occurred"
+msgstr ""
+
+#: sideblogging.php:236
+msgid ""
+"Twitter is currently unavailable. Please check your keys or try again later."
+msgstr ""
+
+#: sideblogging.php:260
+msgid ""
+"The StatusNet installation is currently unavailable. Please check your keys "
+"or try again later."
+msgstr ""
+
+#: sideblogging.php:378
+msgid "Settings"
+msgstr ""
+
+#: sideblogging.php:392
+msgid "No Facebook account registered"
+msgstr ""
+
+#: sideblogging.php:408
+msgid "No Twitter account registered"
+msgstr ""
+
+#: sideblogging.php:422
+msgid "No StatusNet account registered"
+msgstr ""
+
+#: sideblogging.php:444
+msgid "Twitter account registered"
+msgstr ""
+
+#: sideblogging.php:447
+msgid "Error during the connection with Twitter"
+msgstr ""
+
+#: sideblogging.php:469
+msgid "StatusNet account registered"
+msgstr ""
+
+#: sideblogging.php:472
+msgid "Error during the connection with StatusNet installation"
+msgstr ""
+
+#: sideblogging.php:490
+msgid "Facebook account registered"
+msgstr ""
+
+#: sideblogging.php:493
+msgid "Error during the connection with Facebook"
+msgstr ""
+
+#: sideblogging.php:520
+msgid "General Settings"
+msgstr ""
+
+#: sideblogging.php:526
+msgid "Allow comments"
+msgstr ""
+
+#: sideblogging.php:536
+msgid "Purge asides older than "
+msgstr ""
+
+#: sideblogging.php:539
+msgid "days"
+msgstr ""
+
+#: sideblogging.php:539
+msgid "0 for keeping asides forever"
+msgstr ""
+
+#: sideblogging.php:543
+msgid "Url shortener"
+msgstr ""
+
+#: sideblogging.php:556
+msgid "Images directory"
+msgstr ""
+
+#: sideblogging.php:565
+msgid "Permalinks prefix"
+msgstr ""
+
+#: sideblogging.php:585
+msgid "Find your key"
+msgstr ""
+
+#: sideblogging.php:589
+msgid "Applications Settings"
+msgstr ""
+
+#: sideblogging.php:641
+msgid ""
+"Don't forget to look at the contextual help (in the top right of page) for "
+"more informations about keys."
+msgstr ""
+
+#: sideblogging.php:642
+msgid "Save Changes"
+msgstr ""
+
+#: sideblogging.php:648
+msgid "Republish on Twitter"
+msgstr ""
+
+#: sideblogging.php:652
+msgid "You must configure Twitter app to be able to sign-in"
+msgstr ""
+
+#: sideblogging.php:656
+msgid "To automatically publish your asides on Twitter, sign-in below:"
+msgstr ""
+
+#: sideblogging.php:663
+msgid "You are connected to Twitter as %s"
+msgstr ""
+
+#: sideblogging.php:664 sideblogging.php:688 sideblogging.php:707
+msgid "Change account or disable"
+msgstr ""
+
+#: sideblogging.php:668
+msgid "Republish on Facebook"
+msgstr ""
+
+#: sideblogging.php:672
+msgid "Sorry, you need OpenSLL to connect with Facebook"
+msgstr ""
+
+#: sideblogging.php:676
+msgid "You must configure Facebook app to be able to sign-in"
+msgstr ""
+
+#: sideblogging.php:680
+msgid "To automatically publish your asides on Facebook, sign-in below:"
+msgstr ""
+
+#: sideblogging.php:687
+msgid "You are connected to Facebook as %s"
+msgstr ""
+
+#: sideblogging.php:692
+msgid "Republish on a Identi.ca (or other StatusNet installation)"
+msgstr ""
+
+#: sideblogging.php:695
+msgid "You must configure StatusNet app to be able to sign-in"
+msgstr ""
+
+#: sideblogging.php:699
+msgid "To automatically publish your asides on StatusNet, sign-in below:"
+msgstr ""
+
+#: sideblogging.php:706
+msgid "You are connected to StatusNet as %s"
+msgstr ""
+
+#: sideblogging.php:780
+msgid "Aside"
+msgstr ""
+
+#: sideblogging.php:787
+msgid "Add new aside"
+msgstr ""
+
+#: sideblogging.php:788
+msgid "Edit aside"
+msgstr ""
+
+#: sideblogging.php:789
+msgid "No aside found"
+msgstr ""
+
+#: sideblogging.php:790
+msgid "No aside found in trash"
+msgstr ""
+
+#: sideblogging.php:791
+msgid "Search asides"
+msgstr ""
+
+#: sideblogging_Widget.php:10
+msgid "Display asides in a widget"
+msgstr ""
+
+#: sideblogging_Widget.php:26
+msgid "Title:"
+msgstr ""
+
+#: sideblogging_Widget.php:30
+msgid "Number of asides to display:"
+msgstr ""
+
+#: sideblogging_Widget.php:39
+msgid "Link on an image after the title"
+msgstr ""
+
+#: sideblogging_Widget.php:42
+msgid "Asides are clickable (if content is not empty)"
+msgstr ""
+
+#: sideblogging_Widget.php:45
+msgid "Show a link to a RSS feed"
+msgstr ""
+
+#: sideblogging_Widget.php:48
+msgid "Show a link to an archive page"
+msgstr ""
+
+#: sideblogging_Widget.php:177
+msgid "More"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "SideBlogging"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Cédric Boverie"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.boverie.eu/"
+msgstr ""
