@@ -67,7 +67,7 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 == Changelog ==
 
 = 0.8.1 =
-* Get archives working with more themes
+* Archives work with more themes
 
 = 0.8 =
 * Compatibility with Wordpress 3.3
