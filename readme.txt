@@ -4,7 +4,7 @@ Donate link: http://www.boverie.eu/
 Tags: asides,facebook,twitter
 Requires at least: 3.0
 Tested up to: 3.3
-Stable tag: 0.8.0.1
+Stable tag: 0.8.1
 
 Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
 
@@ -65,6 +65,9 @@ Click on change Facebook account on settings page and try to Connect Facebook ag
 4. Public widget
 
 == Changelog ==
+
+= 0.8.1 =
+* Get archives working with more themes
 
 = 0.8 =
 * Compatibility with Wordpress 3.3

@@ -3,7 +3,7 @@
  * Plugin Name: SideBlogging
  * Plugin URI: http://blog.boverie.eu/sideblogging-des-breves-sur-votre-blog/
  * Description: Display asides in a widget. They can automatically be published to Twitter, Facebook, and any Status.net installation (like identi.ca).
- * Version: 0.8.0.1
+ * Version: 0.8.1
  * Author: Cédric Boverie
  * Author URI: http://www.boverie.eu/
  * Text Domain: sideblogging
@@ -485,6 +485,7 @@ class Sideblogging {
 				'public' => true,
 				'menu_position' => 5,
 				'show_ui' => true,
+				'has_archive' => true,
 				'capability_type' => 'post',
 				'hierarchical' => false,
 				'labels' => array(
